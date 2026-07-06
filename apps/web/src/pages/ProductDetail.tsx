@@ -16,8 +16,8 @@ export function ProductDetail() {
   const tracker = trackers.find((t) => t.productId === productId);
   const stats = computeStats(history);
 
-  if (loading) return <p className="text-black/40 dark:text-white/40">Loading…</p>;
-  if (!product) return <p className="text-black/40 dark:text-white/40">Product not found.</p>;
+  if (loading) return <p className="text-ink-faint">Loading…</p>;
+  if (!product) return <p className="text-ink-faint">Product not found.</p>;
 
   const fmt = new Intl.NumberFormat("en-US", { style: "currency", currency: product.currency });
 
@@ -35,13 +35,13 @@ export function ProductDetail() {
             <img src={product.imageUrl} alt="" className="h-24 w-24 rounded-lg object-cover" />
           )}
           <div>
-            <h1 className="text-2xl font-bold">{product.title}</h1>
-            <p className="text-black/50 dark:text-white/50">{product.retailer}</p>
-            <p className="tabular mt-1 text-3xl font-semibold">
+            <h1 className="text-2xl font-bold text-ink">{product.title}</h1>
+            <p className="text-ink-faint">{product.retailer}</p>
+            <p className="tabular mt-1 text-3xl font-semibold text-ink">
               {product.currentPrice !== null ? fmt.format(product.currentPrice) : "—"}
             </p>
             {!product.inStock && (
-              <span className="mt-1 inline-block rounded-full bg-danger/10 px-2 py-0.5 text-xs font-medium text-danger">
+              <span className="mt-1 inline-block rounded-full border border-border/15 bg-surface-raised px-2 py-0.5 text-xs font-medium text-ink-muted">
                 Out of stock
               </span>
             )}
@@ -53,14 +53,14 @@ export function ProductDetail() {
             href={product.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md bg-brand px-5 py-3 text-center font-medium text-white hover:opacity-90"
+            className="rounded-md bg-brand px-5 py-3 text-center font-medium text-bg shadow-glow transition hover:bg-brand-hover"
           >
             Buy at {product.retailer} →
           </a>
           {tracker && (
             <button
               onClick={handleUntrack}
-              className="text-sm text-black/50 hover:text-danger dark:text-white/50"
+              className="text-sm text-ink-faint transition hover:text-brand"
             >
               Stop tracking
             </button>

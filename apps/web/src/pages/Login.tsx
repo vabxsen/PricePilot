@@ -41,10 +41,10 @@ export function Login() {
 
   return (
     <section className="mx-auto max-w-sm">
-      <h1 className="text-center text-2xl font-bold">
+      <h1 className="text-center text-2xl font-bold text-ink">
         {mode === "signup" ? "Create your account" : "Sign in to PricePilot"}
       </h1>
-      <p className="mt-2 text-center text-black/60 dark:text-white/60">
+      <p className="mt-2 text-center text-ink-muted">
         Track prices and get alerted when they drop.
       </p>
 
@@ -52,15 +52,15 @@ export function Login() {
         <button
           onClick={handleGoogle}
           disabled={!isFirebaseConfigured || busy}
-          className="w-full rounded-md border border-black/10 bg-surface px-4 py-3 font-medium hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+          className="w-full rounded-md border border-border/15 bg-surface px-4 py-3 font-medium text-ink transition hover:bg-surface-raised disabled:opacity-50"
         >
           Continue with Google
         </button>
 
-        <div className="flex items-center gap-3 text-xs text-black/40 dark:text-white/40">
-          <div className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+        <div className="flex items-center gap-3 text-xs text-ink-faint">
+          <div className="h-px flex-1 bg-border/10" />
           or
-          <div className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+          <div className="h-px flex-1 bg-border/10" />
         </div>
 
         <form onSubmit={handleEmailSubmit} className="space-y-3">
@@ -70,7 +70,7 @@ export function Login() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-md border border-black/10 bg-surface px-4 py-3 outline-none focus:border-brand dark:border-white/15"
+            className="w-full rounded-md border border-border/15 bg-surface px-4 py-3 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
           />
           <input
             type="password"
@@ -79,18 +79,18 @@ export function Login() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-md border border-black/10 bg-surface px-4 py-3 outline-none focus:border-brand dark:border-white/15"
+            className="w-full rounded-md border border-border/15 bg-surface px-4 py-3 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
           />
           <button
             type="submit"
             disabled={!isFirebaseConfigured || busy}
-            className="w-full rounded-md bg-brand px-4 py-3 font-medium text-white hover:opacity-90 disabled:opacity-50"
+            className="w-full rounded-md bg-brand px-4 py-3 font-medium text-bg shadow-glow transition hover:bg-brand-hover disabled:opacity-50"
           >
             {mode === "signup" ? "Create account" : "Sign in"}
           </button>
         </form>
 
-        {error && <p className="text-sm text-danger">{error}</p>}
+        {error && <p className="text-sm text-brand">{error}</p>}
 
         <button
           onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
@@ -101,7 +101,7 @@ export function Login() {
       </div>
 
       {!isFirebaseConfigured && (
-        <p className="mt-4 text-center text-xs text-black/50 dark:text-white/50">
+        <p className="mt-4 text-center text-xs text-ink-faint">
           Auth activates once Firebase env vars are set.
         </p>
       )}

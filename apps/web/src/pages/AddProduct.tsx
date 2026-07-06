@@ -44,10 +44,8 @@ export function AddProduct() {
 
   return (
     <section className="mx-auto max-w-xl">
-      <h1 className="text-2xl font-bold">Track a new product</h1>
-      <p className="mt-2 text-black/60 dark:text-white/60">
-        Paste a product URL and we'll pull the current price.
-      </p>
+      <h1 className="text-2xl font-bold text-ink">Track a new product</h1>
+      <p className="mt-2 text-ink-muted">Paste a product URL and we'll pull the current price.</p>
 
       <form onSubmit={handleResolve} className="mt-6 flex gap-2">
         <input
@@ -56,29 +54,29 @@ export function AddProduct() {
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://…"
-          className="flex-1 rounded-md border border-black/10 bg-surface px-4 py-3 outline-none focus:border-brand dark:border-white/15"
+          className="flex-1 rounded-md border border-border/15 bg-surface px-4 py-3 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
         />
         <button
           type="submit"
           disabled={status === "resolving"}
-          className="rounded-md bg-brand px-5 py-3 font-medium text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded-md bg-brand px-5 py-3 font-medium text-bg shadow-glow transition hover:bg-brand-hover disabled:opacity-50"
         >
           {status === "resolving" ? "Resolving…" : "Resolve"}
         </button>
       </form>
 
-      {error && <p className="mt-3 text-sm text-danger">{error}</p>}
+      {error && <p className="mt-3 text-sm text-brand">{error}</p>}
 
       {preview && (
-        <div className="mt-6 rounded-lg border border-black/10 bg-surface p-4 dark:border-white/15">
+        <div className="mt-6 rounded-lg border border-border/15 bg-surface p-4">
           <div className="flex gap-4">
             {preview.imageUrl && (
               <img src={preview.imageUrl} alt="" className="h-20 w-20 rounded-md object-cover" />
             )}
             <div className="flex-1">
-              <div className="font-medium">{preview.title ?? "Untitled product"}</div>
-              <div className="text-sm text-black/50 dark:text-white/50">{preview.retailer}</div>
-              <div className="tabular mt-1 text-xl font-semibold">
+              <div className="font-medium text-ink">{preview.title ?? "Untitled product"}</div>
+              <div className="text-sm text-ink-faint">{preview.retailer}</div>
+              <div className="tabular mt-1 text-xl font-semibold text-ink">
                 {preview.price !== null
                   ? new Intl.NumberFormat("en-US", {
                       style: "currency",
@@ -98,7 +96,7 @@ export function AddProduct() {
           <button
             onClick={handleConfirm}
             disabled={status === "saving"}
-            className="mt-4 w-full rounded-md bg-brand px-4 py-3 font-medium text-white hover:opacity-90 disabled:opacity-50"
+            className="mt-4 w-full rounded-md bg-brand px-4 py-3 font-medium text-bg shadow-glow transition hover:bg-brand-hover disabled:opacity-50"
           >
             {status === "saving" ? "Saving…" : "Track this product"}
           </button>

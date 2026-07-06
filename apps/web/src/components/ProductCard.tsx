@@ -7,13 +7,11 @@ export function ProductCard({ tracker }: { tracker: TrackerDoc }) {
   const { product, loading } = useProduct(tracker.productId);
 
   if (loading) {
-    return (
-      <div className="h-32 animate-pulse rounded-lg border border-black/5 bg-surface dark:border-white/10" />
-    );
+    return <div className="h-32 animate-pulse rounded-lg border border-border/10 bg-surface" />;
   }
   if (!product) {
     return (
-      <div className="rounded-lg border border-black/5 bg-surface p-4 text-sm text-black/40 dark:border-white/10">
+      <div className="rounded-lg border border-border/10 bg-surface p-4 text-sm text-ink-faint">
         Product no longer available.
       </div>
     );
@@ -24,16 +22,16 @@ export function ProductCard({ tracker }: { tracker: TrackerDoc }) {
   return (
     <Link
       to={`/product/${product.id}`}
-      className="block rounded-lg border border-black/5 bg-surface p-4 transition hover:border-brand/40 hover:shadow-sm dark:border-white/10"
+      className="block rounded-lg border border-border/10 bg-surface p-4 transition hover:border-brand/50 hover:bg-surface-raised"
     >
       <div className="flex gap-3">
         {product.imageUrl && (
           <img src={product.imageUrl} alt="" className="h-16 w-16 shrink-0 rounded-md object-cover" />
         )}
         <div className="min-w-0 flex-1">
-          <div className="truncate font-medium">{product.title}</div>
-          <div className="text-xs text-black/50 dark:text-white/50">{product.retailer}</div>
-          <div className="tabular mt-1 text-lg font-semibold">
+          <div className="truncate font-medium text-ink">{product.title}</div>
+          <div className="text-xs text-ink-faint">{product.retailer}</div>
+          <div className="tabular mt-1 text-lg font-semibold text-ink">
             {product.currentPrice !== null ? fmt.format(product.currentPrice) : "—"}
           </div>
           {product.currentPrice !== null && (
@@ -42,7 +40,7 @@ export function ProductCard({ tracker }: { tracker: TrackerDoc }) {
         </div>
       </div>
       {!product.inStock && (
-        <div className="mt-2 inline-block rounded-full bg-danger/10 px-2 py-0.5 text-xs font-medium text-danger">
+        <div className="mt-2 inline-block rounded-full border border-border/15 bg-surface-raised px-2 py-0.5 text-xs font-medium text-ink-muted">
           Out of stock
         </div>
       )}

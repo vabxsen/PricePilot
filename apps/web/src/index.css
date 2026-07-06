@@ -2,28 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design tokens — HSL channels so Tailwind's <alpha-value> works.
-   Light theme defaults; dark theme overrides on the .dark class. */
+/*
+ * PricePilot brand: near-black (#020202) + vivid red-orange (#ff2500).
+ * One deliberate dark theme, not a light/dark toggle — see
+ * docs/01-design-system.md for the full rationale.
+ *
+ * Semantic note: red is the brand's hero color, so it's used for price
+ * DROPS (the exciting, "hot deal" moment — standard retail convention:
+ * sale tags are red) rather than the finance convention of red=bad.
+ * Price increases are deliberately quiet/muted — this app is about
+ * drops, not tracking things going up.
+ */
 :root {
-  --brand-primary: 217 91% 60%; /* #2563EB-ish */
-  --brand-accent: 189 94% 43%; /* cyan-500 */
-  --success: 142 71% 45%;
-  --warning: 32 95% 44%;
-  --danger: 0 72% 51%;
-  --bg: 210 40% 98%;
-  --surface: 0 0% 100%;
-  --text: 222 47% 11%;
-}
+  --bg: 0 0% 1%; /* #020202 */
+  --surface: 0 0% 7%; /* card background, subtle lift off bg */
+  --surface-raised: 0 0% 11%; /* hover / raised surface */
+  --border: 0 0% 100%; /* used only via low-alpha, e.g. border-border/10 */
 
-.dark {
-  --brand-primary: 217 91% 65%;
-  --brand-accent: 187 92% 53%;
-  --success: 142 69% 58%;
-  --warning: 38 92% 50%;
-  --danger: 0 84% 60%;
-  --bg: 222 47% 6%;
-  --surface: 222 40% 11%;
-  --text: 214 32% 91%;
+  --brand: 9 100% 50%; /* #ff2500 */
+  --brand-hover: 9 100% 44%;
+  --brand-soft: 9 100% 50%; /* paired with low alpha for tints/badges */
+
+  --warning: 40 100% 55%; /* amber — used sparingly, distinct from brand */
+
+  --text: 0 0% 96%;
+  --text-muted: 0 0% 62%;
+  --text-faint: 0 0% 40%;
 }
 
 html,
@@ -42,4 +46,9 @@ body {
 /* Prices always align in columns. */
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background-color: hsl(var(--brand) / 0.35);
+  color: hsl(var(--text));
 }

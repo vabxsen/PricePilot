@@ -11,24 +11,26 @@ function Nav() {
   const { user } = useAuth();
 
   return (
-    <header className="border-b border-black/5 dark:border-white/10">
+    <header className="border-b border-border/10 bg-bg/80 backdrop-blur supports-[backdrop-filter]:bg-bg/60 sticky top-0 z-10">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link to="/" className="flex items-center gap-2 font-semibold">
-          <span className="grid h-7 w-7 place-items-center rounded-md bg-brand text-white">✈</span>
-          <span className="text-lg">PricePilot</span>
+        <Link to="/" className="flex items-center gap-2 font-semibold text-ink">
+          <span className="grid h-7 w-7 place-items-center rounded-md bg-brand text-bg shadow-glow">
+            ✈
+          </span>
+          <span className="text-lg tracking-tight">PricePilot</span>
         </Link>
-        <nav className="flex items-center gap-4 text-sm">
+        <nav className="flex items-center gap-5 text-sm">
           {user ? (
             <>
-              <Link to="/dashboard" className="text-brand hover:underline">
+              <Link to="/dashboard" className="text-ink-muted transition hover:text-ink">
                 Dashboard
               </Link>
-              <Link to="/add" className="text-brand hover:underline">
+              <Link to="/add" className="text-ink-muted transition hover:text-ink">
                 Add product
               </Link>
               <button
                 onClick={() => signOutUser()}
-                className="text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"
+                className="text-ink-faint transition hover:text-ink-muted"
               >
                 Sign out
               </button>
@@ -36,7 +38,7 @@ function Nav() {
           ) : (
             <Link
               to="/login"
-              className="rounded-md bg-brand px-3 py-1.5 font-medium text-white hover:opacity-90"
+              className="rounded-md bg-brand px-3 py-1.5 font-medium text-bg transition hover:bg-brand-hover"
             >
               Sign in
             </Link>
@@ -81,7 +83,7 @@ export function App() {
           />
         </Routes>
       </main>
-      <footer className="border-t border-black/5 px-4 py-6 text-center text-sm text-black/50 dark:border-white/10 dark:text-white/50">
+      <footer className="border-t border-border/10 px-4 py-6 text-center text-sm text-ink-faint">
         PricePilot
       </footer>
     </div>

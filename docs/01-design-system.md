@@ -13,19 +13,23 @@
 
 **Logo concept:** A stylized paper-plane / navigation cursor merged with a downward price arrow. Wordmark in a geometric sans. Provide SVG mark (monochrome + full color), favicon, and app icon set.
 
-### Color palette (tokens, not raw hex in components)
+### Color palette — v2 (2026-07-06 brand refresh)
 
-| Token | Light | Dark | Use |
-|-------|-------|------|-----|
-| `--brand-primary` | `#2563EB` (blue-600) | `#3B82F6` | Primary actions, logo |
-| `--brand-accent` | `#06B6D4` (cyan-500) | `#22D3EE` | Highlights, sparklines |
-| `--success` | `#16A34A` | `#22C55E` | Price drops, good deals |
-| `--warning` | `#D97706` | `#F59E0B` | Rising prices, near-limit |
-| `--danger` | `#DC2626` | `#EF4444` | Price increase, errors |
-| `--bg` / `--surface` | `#FFFFFF` / `#F8FAFC` | `#0B1120` / `#111827` | Page / cards |
-| `--text` / `--muted` | `#0F172A` / `#64748B` | `#E2E8F0` / `#94A3B8` | Text |
+The app now runs on **one deliberate dark theme** built from two brand colors, rather than a light/dark toggle:
 
-Semantic pairing rule: **green = cheaper/good**, **red = pricier/bad** — consistent everywhere (charts, badges, deltas). Verified for WCAG AA contrast in both themes.
+| Token | Value | Use |
+|-------|-------|-----|
+| `--bg` | `#020202` | Page background |
+| `--surface` | `#121212` (0 0% 7%) | Cards, inputs |
+| `--surface-raised` | `#1c1c1c` (0 0% 11%) | Hover states |
+| `--brand` | `#ff2500` | Logo, CTAs, links, price-drop signal, focus rings |
+| `--brand-hover` | `#e01f00` (9 100% 44%) | Hover/active on brand elements |
+| `--warning` | `#ffc61a` (40 100% 55%) | Sparse caution states (e.g. "no price detected") |
+| `--text` / `--text-muted` / `--text-faint` | `#f5f5f5` / `#9e9e9e` / `#666666` | Primary / secondary / tertiary text |
+
+**Semantic pairing rule (revised):** red is the brand's hero color, so it's reserved for the *exciting* signal — **price drops** — following retail convention (sale tags are red, not green). Price **increases** are deliberately quiet/muted gray: this product is about drops, so increases don't compete for attention. Errors/form validation also use brand red, disambiguated by context (icon, copy, placement) rather than a second red hue — keeps the palette to exactly the two given brand colors plus neutrals.
+
+Implementation: CSS custom properties in `apps/web/src/index.css`, mapped to Tailwind tokens (`bg`, `surface`, `surface-raised`, `brand`, `brand-hover`, `warning`, `ink`/`ink-muted`/`ink-faint`) in `apps/web/tailwind.config.ts`. `danger` is aliased to `brand` for continuity in older component code.
 
 ### Typography
 - **UI/body:** `Inter` (variable) — excellent legibility, tabular numerals for prices.

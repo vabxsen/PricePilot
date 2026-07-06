@@ -25,10 +25,10 @@ export function Landing() {
 
   return (
     <section className="mx-auto max-w-3xl text-center">
-      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+      <h1 className="text-4xl font-bold tracking-tight text-ink sm:text-5xl">
         Never overpay <span className="text-brand">again</span>.
       </h1>
-      <p className="mx-auto mt-4 max-w-xl text-lg text-black/60 dark:text-white/60">
+      <p className="mx-auto mt-4 max-w-xl text-lg text-ink-muted">
         Track any product's price across the web. PricePilot watches it for you and pings you the
         moment it drops.
       </p>
@@ -39,35 +39,33 @@ export function Landing() {
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="Paste a product URL…"
-          className="flex-1 rounded-md border border-black/10 bg-surface px-4 py-3 outline-none focus:border-brand dark:border-white/15"
+          className="flex-1 rounded-md border border-border/15 bg-surface px-4 py-3 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
           aria-label="Product URL"
         />
         <button
           type="submit"
-          className="rounded-md bg-brand px-5 py-3 font-medium text-white hover:opacity-90"
+          className="rounded-md bg-brand px-5 py-3 font-medium text-bg shadow-glow transition hover:bg-brand-hover"
         >
           Track price
         </button>
       </form>
 
-      {error && <p className="mt-4 text-sm text-danger">{error}</p>}
+      {error && <p className="mt-4 text-sm text-brand">{error}</p>}
 
       <div className="mx-auto mt-12 grid max-w-xl grid-cols-3 gap-4 text-left">
-        <Stat label="Price history" value="Always on" tone="success" />
-        <Stat label="Alerts" value="Free" tone="success" />
-        <Stat label="Cost to you" value="$0" tone="success" />
+        <Stat label="Price history" value="Always on" />
+        <Stat label="Alerts" value="Free" />
+        <Stat label="Cost to you" value="$0" />
       </div>
     </section>
   );
 }
 
-function Stat({ label, value, tone }: { label: string; value: string; tone?: "success" }) {
+function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-black/5 bg-surface p-4 dark:border-white/10">
-      <div className="text-xs uppercase tracking-wide text-black/40 dark:text-white/40">{label}</div>
-      <div className={`tabular mt-1 text-2xl font-semibold ${tone === "success" ? "text-success" : ""}`}>
-        {value}
-      </div>
+    <div className="rounded-lg border border-border/10 bg-surface p-4">
+      <div className="text-xs uppercase tracking-wide text-ink-faint">{label}</div>
+      <div className="tabular mt-1 text-2xl font-semibold text-brand">{value}</div>
     </div>
   );
 }
