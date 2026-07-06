@@ -50,7 +50,7 @@ export function Landing() {
         </Button>
       </form>
 
-      {error && <p className="mt-4 text-sm text-brand">{error}</p>}
+      {error && <p className="mt-4 text-sm text-danger">{error}</p>}
 
       <div className="mx-auto mt-12 grid max-w-xl grid-cols-3 gap-4 text-left">
         <Stat label="Price history" value="Always on" />

@@ -1,10 +1,18 @@
 import { computeStats } from "@pricepilot/shared";
 import { useNavigate, useParams } from "react-router-dom";
+import { Card } from "../components/ui/Card.js";
 import { PriceChart } from "../components/PriceChart.js";
 import { StatTile } from "../components/StatTile.js";
 import { buttonClasses } from "../components/ui/Button.js";
+import { Switch } from "../components/ui/Switch.js";
 import { useAuth } from "../lib/auth.js";
-import { removeTracker, useProduct, useProductHistory, useTrackerList } from "../lib/trackers.js";
+import {
+  removeTracker,
+  setTrackerAlertsEnabled,
+  useProduct,
+  useProductHistory,
+  useTrackerList,
+} from "../lib/trackers.js";
 
 export function ProductDetail() {
   const { productId } = useParams<{ productId: string }>();
@@ -28,6 +36,11 @@ export function ProductDetail() {
     navigate("/dashboard");
   }
 
+  async function handleToggleAlerts(value: boolean) {
+    if (!user || !tracker) return;
+    await setTrackerAlertsEnabled(user.uid, tracker.id, value);
+  }
+
   return (
     <section>
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -41,6 +54,11 @@ export function ProductDetail() {
             <p className="tabular mt-1 text-3xl font-semibold text-ink">
               {product.currentPrice !== null ? fmt.format(product.currentPrice) : "—"}
             </p>
+            {tracker?.targetPrice != null && (
+              <p className="tabular mt-1 text-sm text-ink-muted">
+                Target: <span className="text-brand">{fmt.format(tracker.targetPrice)}</span>
+              </p>
+            )}
             {!product.inStock && (
               <span className="mt-1 inline-block rounded-full border border-border/15 bg-surface-raised px-2 py-0.5 text-xs font-medium text-ink-muted">
                 Out of stock
@@ -61,13 +79,29 @@ export function ProductDetail() {
           {tracker && (
             <button
               onClick={handleUntrack}
-              className="text-sm text-ink-faint transition hover:text-brand"
+              className="text-sm text-ink-faint transition hover:text-danger"
             >
               Stop tracking
             </button>
           )}
         </div>
       </div>
+
+      {tracker && (
+        <Card className="mt-6 flex items-center justify-between">
+          <div>
+            <div className="font-medium text-ink">Price-drop alerts</div>
+            <div className="text-sm text-ink-faint">
+              {tracker.alertsEnabled ? "You'll be notified when the price drops." : "Alerts are off for this product."}
+            </div>
+          </div>
+          <Switch
+            checked={tracker.alertsEnabled}
+            onChange={handleToggleAlerts}
+            label="Toggle price-drop alerts"
+          />
+        </Card>
+      )}
 
       {stats && (
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">

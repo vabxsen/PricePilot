@@ -13,23 +13,24 @@
 
 **Logo concept:** A stylized paper-plane / navigation cursor merged with a downward price arrow. Wordmark in a geometric sans. Provide SVG mark (monochrome + full color), favicon, and app icon set.
 
-### Color palette — v2 (2026-07-06 brand refresh)
+### Color palette — v3 (2026-07-06, cyan accent)
 
-The app now runs on **one deliberate dark theme** built from two brand colors, rather than a light/dark toggle:
+One deliberate dark theme (no light/dark toggle), now built around a single cyan accent:
 
 | Token | Value | Use |
 |-------|-------|-----|
-| `--bg` | `#020202` | Page background |
-| `--surface` | `#121212` (0 0% 7%) | Cards, inputs |
-| `--surface-raised` | `#1c1c1c` (0 0% 11%) | Hover states |
-| `--brand` | `#ff2500` | Logo, CTAs, links, price-drop signal, focus rings |
-| `--brand-hover` | `#e01f00` (9 100% 44%) | Hover/active on brand elements |
-| `--warning` | `#ffc61a` (40 100% 55%) | Sparse caution states (e.g. "no price detected") |
-| `--text` / `--text-muted` / `--text-faint` | `#f5f5f5` / `#9e9e9e` / `#666666` | Primary / secondary / tertiary text |
+| `--color-bg` | `#020202` | Page background |
+| `--color-surface` | `#121212` | Cards, inputs |
+| `--color-surface-raised` | `#1c1c1c` | Hover states |
+| `--color-brand` | `#02FEE4` | Logo, CTAs, links, active states, price-drop signal, focus rings — the **only** accent color, used sparingly |
+| `--color-brand-hover` | `#00dfc6` | Hover/active on brand elements |
+| `--color-warning` | `#ffc61a` | Sparse caution states (e.g. "no price detected") |
+| `--color-danger` | `#ff5c5c` | Errors/validation **only** — cyan doesn't read as "alarm," so this is its own small, dedicated hue, never used for anything else |
+| `--color-ink` / `--color-ink-muted` / `--color-ink-faint` | `#f5f5f5` / `#9e9e9e` / `#666666` | Primary / secondary / tertiary text |
 
-**Semantic pairing rule (revised):** red is the brand's hero color, so it's reserved for the *exciting* signal — **price drops** — following retail convention (sale tags are red, not green). Price **increases** are deliberately quiet/muted gray: this product is about drops, so increases don't compete for attention. Errors/form validation also use brand red, disambiguated by context (icon, copy, placement) rather than a second red hue — keeps the palette to exactly the two given brand colors plus neutrals.
+**Semantic pairing rule:** cyan is the hero/highlight color — used for price **drops** (retail convention: the exciting, "hot deal" moment) and for key data/active states generally. Price **increases** stay quiet/muted gray. Errors use the dedicated `danger` red, not the brand accent, so validation failures never get confused with "your price dropped!" moments.
 
-Implementation: CSS custom properties in `apps/web/src/index.css`, mapped to Tailwind tokens (`bg`, `surface`, `surface-raised`, `brand`, `brand-hover`, `warning`, `ink`/`ink-muted`/`ink-faint`) in `apps/web/tailwind.config.ts`. `danger` is aliased to `brand` for continuity in older component code.
+Implementation: Tailwind v4 CSS-first theme (`@theme` block) directly in `apps/web/src/index.css` — no `tailwind.config.ts` needed. Utilities (`bg-brand`, `text-ink-muted`, `border-border/10`, `shadow-glow`, etc.) are generated automatically from the `--color-*` / `--radius-*` / `--font-*` / `--shadow-*` variables.
 
 ### Typography
 - **UI/body:** `Inter` (variable) — excellent legibility, tabular numerals for prices.

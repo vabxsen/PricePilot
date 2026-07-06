@@ -100,7 +100,7 @@ export function Settings() {
           </Field>
         </Card>
 
-        {error && <p className="text-sm text-brand">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
         <Button type="submit" disabled={status === "saving"}>
           {status === "saving" ? "Saving…" : status === "saved" ? "Saved ✓" : "Save changes"}

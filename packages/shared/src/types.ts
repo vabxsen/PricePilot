@@ -95,6 +95,10 @@ export const TrackerDoc = z.object({
   id: z.string(),
   productId: z.string(),
   priceAtAdd: z.number().nonnegative(),
+  /** Optional specific goal price set at add-time (shown on the card/detail page). */
+  targetPrice: z.number().nonnegative().nullable().optional(),
+  /** UI preference toggle — not yet wired to real notification delivery (no S5 yet). */
+  alertsEnabled: z.boolean().default(true),
   paused: z.boolean().default(false),
   tags: z.array(z.string()).default([]),
   alertRules: z.array(AlertRule).default([]),

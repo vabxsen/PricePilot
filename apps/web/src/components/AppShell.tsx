@@ -30,7 +30,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         <nav className="flex flex-1 flex-col gap-1 px-3">
           {navItems.map((item) => (
-            <NavLink key={item.to} to={item.to} className={({ isActive }) => navLinkClass(isActive)}>
+            <NavLink key={item.to} to={item.to} className={({ isActive }: { isActive: boolean }) => navLinkClass(isActive)}>
               {item.label}
             </NavLink>
           ))}
@@ -69,14 +69,14 @@ export function AppShell({ children }: { children: ReactNode }) {
               <NavLink
                 key={item.to}
                 to={item.to}
-                className={({ isActive }) => (isActive ? "text-brand" : "text-ink-muted")}
+                className={({ isActive }: { isActive: boolean }) => (isActive ? "text-brand" : "text-ink-muted")}
               >
                 {item.label}
               </NavLink>
             ))}
             <NavLink
               to="/settings"
-              className={({ isActive }) => (isActive ? "text-brand" : "text-ink-muted")}
+              className={({ isActive }: { isActive: boolean }) => (isActive ? "text-brand" : "text-ink-muted")}
             >
               Settings
             </NavLink>

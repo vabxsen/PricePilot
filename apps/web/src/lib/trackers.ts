@@ -117,6 +117,7 @@ export function useProductHistory(productId: string | undefined) {
 export async function addTrackerForProduct(
   uid: string,
   resolved: ResolvedProduct,
+  targetPrice?: number | null,
 ): Promise<{ productId: string; trackerId: string; alreadyTracked: boolean }> {
   const db = getDb();
   const productId = await productIdFromUrl(resolved.url);
@@ -164,6 +165,8 @@ export async function addTrackerForProduct(
       id: trackerRef.id,
       productId,
       priceAtAdd: resolved.price ?? 0,
+      targetPrice: targetPrice ?? undefined,
+      alertsEnabled: true,
       paused: false,
       tags: [],
       alertRules: [],
@@ -179,4 +182,12 @@ export async function removeTracker(uid: string, trackerId: string, productId: s
   const db = getDb();
   await deleteDoc(doc(db, "users", uid, "trackers", trackerId));
   await updateDoc(doc(db, "products", productId), { trackerCount: increment(-1) });
+}
+
+export async function setTrackerAlertsEnabled(
+  uid: string,
+  trackerId: string,
+  alertsEnabled: boolean,
+): Promise<void> {
+  await updateDoc(doc(getDb(), "users", uid, "trackers", trackerId), { alertsEnabled });
 }

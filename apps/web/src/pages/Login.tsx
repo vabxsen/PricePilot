@@ -87,7 +87,7 @@ export function Login() {
           </Button>
         </form>
 
-        {error && <p className="text-sm text-brand">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
         <button
           onClick={() => setMode(mode === "signup" ? "signin" : "signup")}

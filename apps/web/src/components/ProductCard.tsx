@@ -1,10 +1,12 @@
 import type { TrackerDoc } from "@pricepilot/shared";
 import { Link } from "react-router-dom";
-import { useProduct } from "../lib/trackers.js";
+import { useProduct, useProductHistory } from "../lib/trackers.js";
 import { Delta } from "./Delta.js";
+import { Sparkline } from "./Sparkline.js";
 
 export function ProductCard({ tracker }: { tracker: TrackerDoc }) {
   const { product, loading } = useProduct(tracker.productId);
+  const { history } = useProductHistory(tracker.productId);
 
   if (loading) {
     return <div className="h-32 animate-pulse rounded-lg border border-border/10 bg-surface" />;
@@ -37,13 +39,26 @@ export function ProductCard({ tracker }: { tracker: TrackerDoc }) {
           {product.currentPrice !== null && (
             <Delta from={tracker.priceAtAdd} to={product.currentPrice} currency={product.currency} />
           )}
+          {tracker.targetPrice != null && (
+            <div className="tabular mt-0.5 text-xs text-ink-faint">
+              Target: {fmt.format(tracker.targetPrice)}
+            </div>
+          )}
         </div>
       </div>
-      {!product.inStock && (
-        <div className="mt-2 inline-block rounded-full border border-border/15 bg-surface-raised px-2 py-0.5 text-xs font-medium text-ink-muted">
-          Out of stock
+
+      <div className="mt-3 flex items-center justify-between gap-3">
+        {!product.inStock ? (
+          <div className="inline-block rounded-full border border-border/15 bg-surface-raised px-2 py-0.5 text-xs font-medium text-ink-muted">
+            Out of stock
+          </div>
+        ) : (
+          <span />
+        )}
+        <div className="text-brand">
+          <Sparkline data={history.map((h) => h.price)} />
         </div>
-      )}
+      </div>
     </Link>
   );
 }

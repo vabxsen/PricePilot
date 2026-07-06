@@ -15,36 +15,34 @@ export function PriceChart({ history, currency = "USD" }: { history: PricePoint[
     price: p.price,
   }));
 
-  const fmt = (v: number) =>
-    new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(v);
+  const fmt = (v: number | string | undefined) =>
+    typeof v === "number"
+      ? new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(v)
+      : "";
 
   return (
     <div className="h-64 rounded-lg border border-border/10 bg-surface p-4">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
-          <XAxis
-            dataKey="date"
-            tick={{ fontSize: 12, fill: "hsl(0 0% 62%)" }}
-            stroke="hsl(0 0% 100% / 0.1)"
-          />
+          <XAxis dataKey="date" tick={{ fontSize: 12, fill: "#9e9e9e" }} stroke="#ffffff1a" />
           <YAxis
-            tick={{ fontSize: 12, fill: "hsl(0 0% 62%)" }}
-            stroke="hsl(0 0% 100% / 0.1)"
-            tickFormatter={fmt}
+            tick={{ fontSize: 12, fill: "#9e9e9e" }}
+            stroke="#ffffff1a"
+            tickFormatter={(v: number) => fmt(v)}
             width={64}
           />
           <Tooltip
-            formatter={(value: number) => fmt(value)}
+            formatter={(value) => fmt(value as number)}
             contentStyle={{
-              background: "hsl(0 0% 7%)",
-              border: "1px solid hsl(0 0% 100% / 0.1)",
+              background: "#121212",
+              border: "1px solid #ffffff1a",
               borderRadius: 8,
-              color: "hsl(0 0% 96%)",
+              color: "#f5f5f5",
             }}
-            labelStyle={{ color: "hsl(0 0% 62%)" }}
-            itemStyle={{ color: "hsl(9 100% 50%)" }}
+            labelStyle={{ color: "#9e9e9e" }}
+            itemStyle={{ color: "#02FEE4" }}
           />
-          <Line type="monotone" dataKey="price" stroke="hsl(9 100% 50%)" strokeWidth={2} dot={false} />
+          <Line type="monotone" dataKey="price" stroke="#02FEE4" strokeWidth={2} dot={false} />
         </LineChart>
       </ResponsiveContainer>
     </div>

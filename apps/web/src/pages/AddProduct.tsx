@@ -14,6 +14,7 @@ export function AddProduct() {
   const initialUrl = (location.state as { url?: string } | null)?.url ?? "";
   const [url, setUrl] = useState(initialUrl);
   const [preview, setPreview] = useState<ResolvedProduct | null>(null);
+  const [targetPrice, setTargetPrice] = useState("");
   const [status, setStatus] = useState<"idle" | "resolving" | "saving">("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -25,6 +26,7 @@ export function AddProduct() {
     try {
       const resolved = await resolveProductUrl(url);
       setPreview(resolved);
+      setTargetPrice(resolved.price !== null ? String(resolved.price) : "");
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -37,7 +39,12 @@ export function AddProduct() {
     setStatus("saving");
     setError(null);
     try {
-      const result = await addTrackerForProduct(user.uid, preview);
+      const parsedTarget = targetPrice.trim() === "" ? null : Number(targetPrice);
+      const result = await addTrackerForProduct(
+        user.uid,
+        preview,
+        parsedTarget !== null && Number.isFinite(parsedTarget) ? parsedTarget : null,
+      );
       navigate(`/product/${result.productId}`);
     } catch (err) {
       setError((err as Error).message);
@@ -64,7 +71,7 @@ export function AddProduct() {
         </Button>
       </form>
 
-      {error && <p className="mt-3 text-sm text-brand">{error}</p>}
+      {error && <p className="mt-3 text-sm text-danger">{error}</p>}
 
       {preview && (
         <Card className="mt-6">
@@ -91,6 +98,20 @@ export function AddProduct() {
               We couldn't detect a price on this page. You can still track it — we'll keep checking.
             </p>
           )}
+
+          <label className="mt-4 block">
+            <span className="mb-1.5 block text-sm font-medium text-ink-muted">
+              Target price <span className="text-ink-faint">(optional)</span>
+            </span>
+            <Input
+              type="number"
+              min={0}
+              step="0.01"
+              value={targetPrice}
+              onChange={(e) => setTargetPrice(e.target.value)}
+              placeholder="e.g. 199.00"
+            />
+          </label>
 
           <Button onClick={handleConfirm} disabled={status === "saving"} className="mt-4 w-full">
             {status === "saving" ? "Saving…" : "Track this product"}
