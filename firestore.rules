@@ -20,6 +20,10 @@ service cloud.firestore {
       match /trackers/{trackerId} {
         allow read, write: if isOwner(uid);
       }
+      match /wishlist/{itemId} {
+        // Saved-but-not-tracked products; fully owner-private.
+        allow read, write: if isOwner(uid);
+      }
       match /notifications/{notifId} {
         // Clients can read/dismiss; the scraper writes via Admin SDK (bypasses rules).
         allow read, update, delete: if isOwner(uid);

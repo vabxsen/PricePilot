@@ -2,13 +2,21 @@ import type { ComponentType, ReactNode } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { signOutUser, useAuth } from "../lib/auth.js";
 import { BottomNav } from "./BottomNav.js";
-import { IconGrid, IconLogout, IconPlus, IconSettings, IconTag } from "./ui/icons.js";
+import {
+  IconGrid,
+  IconHeart,
+  IconLogout,
+  IconPlus,
+  IconSettings,
+  IconTag,
+} from "./ui/icons.js";
 
 type IconType = ComponentType<{ size?: number; className?: string }>;
 
 const navItems: { to: string; label: string; icon: IconType }[] = [
   { to: "/dashboard", label: "Dashboard", icon: IconGrid },
   { to: "/products", label: "Products", icon: IconTag },
+  { to: "/wishlist", label: "Wishlist", icon: IconHeart },
   { to: "/settings", label: "Settings", icon: IconSettings },
 ];
 

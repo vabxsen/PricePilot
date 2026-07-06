@@ -9,6 +9,7 @@ import { Login } from "./pages/Login.js";
 import { ProductDetail } from "./pages/ProductDetail.js";
 import { Products } from "./pages/Products.js";
 import { Settings } from "./pages/Settings.js";
+import { Wishlist } from "./pages/Wishlist.js";
 
 function PublicLayout({ children }: { children: ReactNode }) {
   return (
@@ -57,6 +58,16 @@ export function App() {
           <ProtectedRoute>
             <AppShell>
               <Products />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/wishlist"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <Wishlist />
             </AppShell>
           </ProtectedRoute>
         }

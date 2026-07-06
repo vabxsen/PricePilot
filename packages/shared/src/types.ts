@@ -106,6 +106,27 @@ export const TrackerDoc = z.object({
 });
 export type TrackerDoc = z.infer<typeof TrackerDoc>;
 
+/**
+ * users/{uid}/wishlist/{itemId} — a product the user has saved but is NOT
+ * tracking. Self-contained snapshot (no products/{id} doc, no scraping) so it
+ * can be moved into a real tracker later without re-resolving.
+ */
+export const WishlistItem = z.object({
+  id: z.string(),
+  url: z.string().url(),
+  title: z.string(),
+  brand: z.string().optional(),
+  imageUrl: z.string().url().optional(),
+  retailer: z.string(),
+  currency: z.string().length(3),
+  /** Price captured at save time; null if none was detected. */
+  price: z.number().nonnegative().nullable(),
+  inStock: z.boolean().default(true),
+  source: PriceSource,
+  createdAt: z.number(),
+});
+export type WishlistItem = z.infer<typeof WishlistItem>;
+
 /** A price reading produced by a scraper adapter before it is persisted. */
 export const PriceSnapshot = z.object({
   title: z.string().optional(),

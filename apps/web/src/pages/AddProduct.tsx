@@ -6,6 +6,7 @@ import { Input } from "../components/ui/Input.js";
 import { useAuth } from "../lib/auth.js";
 import { resolveProductUrl, type ResolvedProduct } from "../lib/resolver.js";
 import { addTrackerForProduct } from "../lib/trackers.js";
+import { addToWishlist } from "../lib/wishlist.js";
 
 export function AddProduct() {
   const { user } = useAuth();
@@ -15,7 +16,7 @@ export function AddProduct() {
   const [url, setUrl] = useState(initialUrl);
   const [preview, setPreview] = useState<ResolvedProduct | null>(null);
   const [targetPrice, setTargetPrice] = useState("");
-  const [status, setStatus] = useState<"idle" | "resolving" | "saving">("idle");
+  const [status, setStatus] = useState<"idle" | "resolving" | "saving" | "wishlisting">("idle");
   const [error, setError] = useState<string | null>(null);
 
   async function handleResolve(e: FormEvent) {
@@ -46,6 +47,19 @@ export function AddProduct() {
         parsedTarget !== null && Number.isFinite(parsedTarget) ? parsedTarget : null,
       );
       navigate(`/product/${result.productId}`);
+    } catch (err) {
+      setError((err as Error).message);
+      setStatus("idle");
+    }
+  }
+
+  async function handleSaveToWishlist() {
+    if (!preview || !user) return;
+    setStatus("wishlisting");
+    setError(null);
+    try {
+      await addToWishlist(user.uid, preview);
+      navigate("/wishlist");
     } catch (err) {
       setError((err as Error).message);
       setStatus("idle");
@@ -113,8 +127,20 @@ export function AddProduct() {
             />
           </label>
 
-          <Button onClick={handleConfirm} disabled={status === "saving"} className="mt-4 w-full">
+          <Button
+            onClick={handleConfirm}
+            disabled={status === "saving" || status === "wishlisting"}
+            className="mt-4 w-full"
+          >
             {status === "saving" ? "Saving…" : "Track this product"}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={handleSaveToWishlist}
+            disabled={status === "saving" || status === "wishlisting"}
+            className="mt-2 w-full"
+          >
+            {status === "wishlisting" ? "Saving…" : "Save to wishlist"}
           </Button>
         </Card>
       )}
