@@ -1,11 +1,10 @@
 import type { ReactNode } from "react";
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell.js";
 import { ProtectedRoute } from "./lib/ProtectedRoute.js";
 import { signOutUser, useAuth } from "./lib/auth.js";
 import { AddProduct } from "./pages/AddProduct.js";
 import { Dashboard } from "./pages/Dashboard.js";
-import { Landing } from "./pages/Landing.js";
 import { Login } from "./pages/Login.js";
 import { ProductDetail } from "./pages/ProductDetail.js";
 import { Products } from "./pages/Products.js";
@@ -62,17 +61,19 @@ function PublicLayout({ children }: { children: ReactNode }) {
   );
 }
 
+/** Root: skip the marketing page — go straight into the app (or to login). */
+function Index() {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return <p className="py-20 text-center text-ink-faint">Loading…</p>;
+  }
+  return <Navigate to={user ? "/dashboard" : "/login"} replace />;
+}
+
 export function App() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <PublicLayout>
-            <Landing />
-          </PublicLayout>
-        }
-      />
+      <Route path="/" element={<Index />} />
       <Route
         path="/login"
         element={
