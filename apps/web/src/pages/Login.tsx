@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../components/ui/Button.js";
+import { Input } from "../components/ui/Input.js";
 import { signInWithEmail, signInWithGoogle, signUpWithEmail } from "../lib/auth.js";
 import { isFirebaseConfigured } from "../lib/firebase.js";
 
@@ -49,13 +51,14 @@ export function Login() {
       </p>
 
       <div className="mt-6 space-y-3">
-        <button
+        <Button
+          variant="secondary"
           onClick={handleGoogle}
           disabled={!isFirebaseConfigured || busy}
-          className="w-full rounded-md border border-border/15 bg-surface px-4 py-3 font-medium text-ink transition hover:bg-surface-raised disabled:opacity-50"
+          className="w-full"
         >
           Continue with Google
-        </button>
+        </Button>
 
         <div className="flex items-center gap-3 text-xs text-ink-faint">
           <div className="h-px flex-1 bg-border/10" />
@@ -64,30 +67,24 @@ export function Login() {
         </div>
 
         <form onSubmit={handleEmailSubmit} className="space-y-3">
-          <input
+          <Input
             type="email"
             required
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-md border border-border/15 bg-surface px-4 py-3 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
           />
-          <input
+          <Input
             type="password"
             required
             minLength={6}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-md border border-border/15 bg-surface px-4 py-3 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
           />
-          <button
-            type="submit"
-            disabled={!isFirebaseConfigured || busy}
-            className="w-full rounded-md bg-brand px-4 py-3 font-medium text-bg shadow-glow transition hover:bg-brand-hover disabled:opacity-50"
-          >
+          <Button type="submit" disabled={!isFirebaseConfigured || busy} className="w-full">
             {mode === "signup" ? "Create account" : "Sign in"}
-          </button>
+          </Button>
         </form>
 
         {error && <p className="text-sm text-brand">{error}</p>}

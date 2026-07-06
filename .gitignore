@@ -47,6 +47,9 @@ serviceAccount*.json
 workers/*/.wrangler/
 .wrangler/
 
+# Claude Code local session state
+.claude/
+
 # Misc
 *.local
 .cache/

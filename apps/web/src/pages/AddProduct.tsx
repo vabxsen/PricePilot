@@ -1,5 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Button } from "../components/ui/Button.js";
+import { Card } from "../components/ui/Card.js";
+import { Input } from "../components/ui/Input.js";
 import { useAuth } from "../lib/auth.js";
 import { resolveProductUrl, type ResolvedProduct } from "../lib/resolver.js";
 import { addTrackerForProduct } from "../lib/trackers.js";
@@ -48,27 +51,23 @@ export function AddProduct() {
       <p className="mt-2 text-ink-muted">Paste a product URL and we'll pull the current price.</p>
 
       <form onSubmit={handleResolve} className="mt-6 flex gap-2">
-        <input
+        <Input
           type="url"
           required
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://…"
-          className="flex-1 rounded-md border border-border/15 bg-surface px-4 py-3 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
+          className="flex-1"
         />
-        <button
-          type="submit"
-          disabled={status === "resolving"}
-          className="rounded-md bg-brand px-5 py-3 font-medium text-bg shadow-glow transition hover:bg-brand-hover disabled:opacity-50"
-        >
+        <Button type="submit" size="lg" disabled={status === "resolving"}>
           {status === "resolving" ? "Resolving…" : "Resolve"}
-        </button>
+        </Button>
       </form>
 
       {error && <p className="mt-3 text-sm text-brand">{error}</p>}
 
       {preview && (
-        <div className="mt-6 rounded-lg border border-border/15 bg-surface p-4">
+        <Card className="mt-6">
           <div className="flex gap-4">
             {preview.imageUrl && (
               <img src={preview.imageUrl} alt="" className="h-20 w-20 rounded-md object-cover" />
@@ -93,14 +92,10 @@ export function AddProduct() {
             </p>
           )}
 
-          <button
-            onClick={handleConfirm}
-            disabled={status === "saving"}
-            className="mt-4 w-full rounded-md bg-brand px-4 py-3 font-medium text-bg shadow-glow transition hover:bg-brand-hover disabled:opacity-50"
-          >
+          <Button onClick={handleConfirm} disabled={status === "saving"} className="mt-4 w-full">
             {status === "saving" ? "Saving…" : "Track this product"}
-          </button>
-        </div>
+          </Button>
+        </Card>
       )}
     </section>
   );

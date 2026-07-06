@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ProductCard } from "../components/ProductCard.js";
+import { buttonClasses } from "../components/ui/Button.js";
 import { useAuth } from "../lib/auth.js";
 import { useTrackerList } from "../lib/trackers.js";
 
@@ -11,10 +12,7 @@ export function Dashboard() {
     <section>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-ink">Your watchlist</h1>
-        <Link
-          to="/add"
-          className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-bg shadow-glow transition hover:bg-brand-hover"
-        >
+        <Link to="/add" className={buttonClasses("primary", "md")}>
           + Track a product
         </Link>
       </div>

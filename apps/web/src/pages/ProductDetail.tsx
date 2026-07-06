@@ -2,6 +2,7 @@ import { computeStats } from "@pricepilot/shared";
 import { useNavigate, useParams } from "react-router-dom";
 import { PriceChart } from "../components/PriceChart.js";
 import { StatTile } from "../components/StatTile.js";
+import { buttonClasses } from "../components/ui/Button.js";
 import { useAuth } from "../lib/auth.js";
 import { removeTracker, useProduct, useProductHistory, useTrackerList } from "../lib/trackers.js";
 
@@ -53,7 +54,7 @@ export function ProductDetail() {
             href={product.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md bg-brand px-5 py-3 text-center font-medium text-bg shadow-glow transition hover:bg-brand-hover"
+            className={buttonClasses("primary", "lg", "text-center")}
           >
             Buy at {product.retailer} →
           </a>

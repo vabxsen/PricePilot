@@ -1,5 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../components/ui/Button.js";
+import { Card } from "../components/ui/Card.js";
+import { Input } from "../components/ui/Input.js";
 import { useAuth } from "../lib/auth.js";
 
 export function Landing() {
@@ -34,20 +37,17 @@ export function Landing() {
       </p>
 
       <form onSubmit={onSubmit} className="mx-auto mt-8 flex max-w-xl gap-2">
-        <input
+        <Input
           type="text"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="Paste a product URL…"
-          className="flex-1 rounded-md border border-border/15 bg-surface px-4 py-3 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
           aria-label="Product URL"
+          className="flex-1"
         />
-        <button
-          type="submit"
-          className="rounded-md bg-brand px-5 py-3 font-medium text-bg shadow-glow transition hover:bg-brand-hover"
-        >
+        <Button type="submit" size="lg">
           Track price
-        </button>
+        </Button>
       </form>
 
       {error && <p className="mt-4 text-sm text-brand">{error}</p>}
@@ -63,9 +63,9 @@ export function Landing() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-border/10 bg-surface p-4">
+    <Card>
       <div className="text-xs uppercase tracking-wide text-ink-faint">{label}</div>
       <div className="tabular mt-1 text-2xl font-semibold text-brand">{value}</div>
-    </div>
+    </Card>
   );
 }

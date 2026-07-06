@@ -41,7 +41,9 @@ export type AlertRule = z.infer<typeof AlertRule>;
 export const UserDoc = z.object({
   uid: z.string(),
   email: z.string().email(),
-  displayName: z.string().optional(),
+  displayName: z.string().max(80).optional(),
+  username: z.string().max(30).optional(),
+  bio: z.string().max(280).optional(),
   photoUrl: z.string().url().optional(),
   plan: Plan.default("free"),
   createdAt: z.number(),
