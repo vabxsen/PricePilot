@@ -6,7 +6,6 @@ import {
   IconBox,
   IconChevronRight,
   IconPlus,
-  IconSettings,
   IconTag,
   IconTarget,
   IconTrendDown,
@@ -110,7 +109,6 @@ function TargetCard({ item }: { item: TrackedItem }) {
 const quickActions = [
   { to: "/add", label: "Track a product", desc: "Paste any product URL", icon: IconPlus, accent: true },
   { to: "/products", label: "Browse products", desc: "Manage your watchlist", icon: IconTag },
-  { to: "/settings", label: "Account settings", desc: "Profile & preferences", icon: IconSettings },
 ];
 
 export function Dashboard() {
@@ -234,7 +232,7 @@ export function Dashboard() {
       {/* Quick actions */}
       <div className="mt-10">
         <SectionHeader title="Quick actions" />
-        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
           {quickActions.map(({ to, label, desc, icon: Icon, accent }) => (
             <Link
               key={to}
