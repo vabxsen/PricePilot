@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "pricepilot-667ae"
-  }
+  },
+  "targets": {
+    "pricepilot-667ae": {
+      "hosting": {
+        "app": [
+          "pricepilot"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

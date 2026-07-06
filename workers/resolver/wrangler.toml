@@ -4,4 +4,4 @@ compatibility_date = "2024-11-01"
 
 # Comma-separated list of allowed browser origins (CORS).
 [vars]
-ALLOWED_ORIGINS = "http://localhost:5173,https://pricepilot-667ae.web.app,https://pricepilot-667ae.firebaseapp.com"
+ALLOWED_ORIGINS = "http://localhost:5173,https://pricepilot.web.app,https://pricepilot-667ae.web.app,https://pricepilot-667ae.firebaseapp.com"
