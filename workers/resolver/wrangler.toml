@@ -2,7 +2,6 @@ name = "pricepilot-resolver"
 main = "src/index.ts"
 compatibility_date = "2024-11-01"
 
-# Comma-separated list of allowed browser origins (CORS). Add your Firebase
-# Hosting URL here once deployed, e.g. "https://your-project.web.app".
+# Comma-separated list of allowed browser origins (CORS).
 [vars]
-ALLOWED_ORIGINS = "http://localhost:5173"
+ALLOWED_ORIGINS = "http://localhost:5173,https://pricepilot-667ae.web.app,https://pricepilot-667ae.firebaseapp.com"
