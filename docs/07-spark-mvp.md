@@ -103,8 +103,8 @@ packages/config/          tsconfig / eslint / tailwind presets
 firestore.rules           security rules
 firebase.json             hosting + rules config
 .github/workflows/
-  deploy-web.yml          build + firebase deploy --only hosting
-  scrape.yml              scheduled scrape engine
+  scrape.yml              scheduled scrape engine (the only GitHub Action —
+                          web deploys are manual: `npm run deploy:web`)
 ```
 
 Sharing `packages/shared` means the alert-evaluation and price logic is written **once** and used by both the web app (preview/optimistic UI) and the scraper (authoritative).
@@ -117,7 +117,7 @@ Sharing `packages/shared` means the alert-evaluation and price logic is written 
 - **S3 — Scraper engine:** `services/scraper` + `scrape.yml` cron; writes history, updates products; adapters for 2–3 tolerant retailers with golden fixtures.
 - **S4 — History & insights UI:** product detail with price chart (Recharts), stat tiles, all-time-low badge.
 - **S5 — Alerts & notifications:** alert-rule editor, alert evaluation in scraper, FCM web push + Resend email, preferences.
-- **S6 — Polish & deploy:** empty states, PWA/installable, `deploy-web.yml` auto-deploy to Firebase Hosting, docs.
+- **S6 — Polish & deploy:** empty states, PWA/installable, manual `npm run deploy:web` to Firebase Hosting, docs.
 
 Dependencies are linear S0→S6; adapters (part of S3) continue growing after.
 
