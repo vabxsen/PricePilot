@@ -106,11 +106,6 @@ function TargetCard({ item }: { item: TrackedItem }) {
   );
 }
 
-const quickActions = [
-  { to: "/add", label: "Track a product", desc: "Paste any product URL", icon: IconPlus, accent: true },
-  { to: "/products", label: "Browse products", desc: "Manage your watchlist", icon: IconTag },
-];
-
 export function Dashboard() {
   const { user } = useAuth();
   const { profile } = useUserProfile(user?.uid);
@@ -150,15 +145,7 @@ export function Dashboard() {
 
   return (
     <section className="animate-fade-up">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-ink">Welcome back, {name}</h1>
-        <Link
-          to="/add"
-          className={`${buttonClasses("primary", "md")} hidden items-center gap-2 md:inline-flex`}
-        >
-          <IconPlus size={18} /> Track a product
-        </Link>
-      </div>
+      <h1 className="text-2xl font-bold text-ink">Welcome back, {name}</h1>
 
       {/* Stats */}
       <div className="mt-6 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
@@ -194,70 +181,51 @@ export function Dashboard() {
       )}
 
       {items.length > 0 && (
-        <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-2">
-          {/* Recent price drops */}
-          <div className="rounded-lg border border-border/10 bg-surface p-4">
-            <SectionHeader title="Recent price drops" to="/products" cta="All products" />
-            {drops.length === 0 ? (
-              <p className="px-2 py-5 text-center text-sm text-ink-faint">
-                No drops yet — check back soon.
-              </p>
-            ) : (
-              <div className="-mx-2">
-                {drops.slice(0, 5).map((item) => (
-                  <DropRow key={item.tracker.id} item={item} />
-                ))}
-              </div>
-            )}
+        <>
+          <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-2">
+            {/* Recent price drops */}
+            <div className="rounded-lg border border-border/10 bg-surface p-4">
+              <SectionHeader title="Recent price drops" to="/products" cta="All products" />
+              {drops.length === 0 ? (
+                <p className="px-2 py-5 text-center text-sm text-ink-faint">
+                  No drops yet — check back soon.
+                </p>
+              ) : (
+                <div className="-mx-2">
+                  {drops.slice(0, 5).map((item) => (
+                    <DropRow key={item.tracker.id} item={item} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Active price targets */}
+            <div className="rounded-lg border border-border/10 bg-surface p-4">
+              <SectionHeader title="Active alerts" />
+              {targets.length === 0 ? (
+                <p className="px-2 py-5 text-center text-sm text-ink-faint">
+                  Set a target price to track progress here.
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {targets.slice(0, 5).map((item) => (
+                    <TargetCard key={item.tracker.id} item={item} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Active price targets */}
-          <div className="rounded-lg border border-border/10 bg-surface p-4">
-            <SectionHeader title="Active alerts" />
-            {targets.length === 0 ? (
-              <p className="px-2 py-5 text-center text-sm text-ink-faint">
-                Set a target price to track progress here.
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {targets.slice(0, 5).map((item) => (
-                  <TargetCard key={item.tracker.id} item={item} />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Quick actions */}
-      <div className="mt-10">
-        <SectionHeader title="Quick actions" />
-        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-          {quickActions.map(({ to, label, desc, icon: Icon, accent }) => (
+          <div className="mt-5 flex sm:justify-end">
             <Link
-              key={to}
-              to={to}
-              className="group flex items-center gap-3 rounded-lg border border-border/10 bg-surface p-3.5 transition hover:border-brand/40 hover:bg-surface-raised"
+              to="/add"
+              className={`${buttonClasses("primary", "md")} inline-flex w-full items-center justify-center gap-2 sm:w-auto`}
             >
-              <div
-                className={`grid h-9 w-9 shrink-0 place-items-center rounded-md ${
-                  accent ? "bg-brand/15 text-brand" : "bg-surface-raised text-ink-muted"
-                }`}
-              >
-                <Icon size={18} />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium text-ink">{label}</div>
-                <div className="truncate text-xs text-ink-faint">{desc}</div>
-              </div>
-              <IconChevronRight
-                size={16}
-                className="shrink-0 text-ink-faint transition group-hover:text-brand"
-              />
+              <IconPlus size={18} /> Track a product
             </Link>
-          ))}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
     </section>
   );
 }

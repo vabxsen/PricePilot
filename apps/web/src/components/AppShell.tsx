@@ -109,16 +109,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         </main>
       </div>
 
-      {/* Mobile bottom navigation + add FAB */}
+      {/* Mobile bottom navigation */}
       <BottomNav />
-      <Link
-        to="/add"
-        aria-label="Track a product"
-        className="fixed bottom-20 right-5 z-40 grid h-14 w-14 place-items-center rounded-full bg-brand text-bg shadow-glow transition hover:bg-brand-hover md:hidden"
-        style={{ marginBottom: "env(safe-area-inset-bottom)" }}
-      >
-        <IconPlus size={26} />
-      </Link>
     </div>
   );
 }
