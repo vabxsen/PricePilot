@@ -1,9 +1,15 @@
 import { Link, Route, Routes } from "react-router-dom";
+import { ProtectedRoute } from "./lib/ProtectedRoute.js";
+import { signOutUser, useAuth } from "./lib/auth.js";
+import { AddProduct } from "./pages/AddProduct.js";
 import { Dashboard } from "./pages/Dashboard.js";
 import { Landing } from "./pages/Landing.js";
 import { Login } from "./pages/Login.js";
+import { ProductDetail } from "./pages/ProductDetail.js";
 
 function Nav() {
+  const { user } = useAuth();
+
   return (
     <header className="border-b border-black/5 dark:border-white/10">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
@@ -12,15 +18,29 @@ function Nav() {
           <span className="text-lg">PricePilot</span>
         </Link>
         <nav className="flex items-center gap-4 text-sm">
-          <Link to="/dashboard" className="text-brand hover:underline">
-            Dashboard
-          </Link>
-          <Link
-            to="/login"
-            className="rounded-md bg-brand px-3 py-1.5 font-medium text-white hover:opacity-90"
-          >
-            Sign in
-          </Link>
+          {user ? (
+            <>
+              <Link to="/dashboard" className="text-brand hover:underline">
+                Dashboard
+              </Link>
+              <Link to="/add" className="text-brand hover:underline">
+                Add product
+              </Link>
+              <button
+                onClick={() => signOutUser()}
+                className="text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="rounded-md bg-brand px-3 py-1.5 font-medium text-white hover:opacity-90"
+            >
+              Sign in
+            </Link>
+          )}
         </nav>
       </div>
     </header>
@@ -34,12 +54,35 @@ export function App() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add"
+            element={
+              <ProtectedRoute>
+                <AddProduct />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/product/:productId"
+            element={
+              <ProtectedRoute>
+                <ProductDetail />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </main>
       <footer className="border-t border-black/5 px-4 py-6 text-center text-sm text-black/50 dark:border-white/10 dark:text-white/50">
-        PricePilot — MVP scaffold (S0). See <code>docs/07-spark-mvp.md</code>.
+        PricePilot
       </footer>
     </div>
   );

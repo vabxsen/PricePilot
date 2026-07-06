@@ -43,6 +43,10 @@ firebase-debug.log
 *-debug.log
 serviceAccount*.json
 
+# Cloudflare Workers (wrangler local dev artifacts)
+workers/*/.wrangler/
+.wrangler/
+
 # Misc
 *.local
 .cache/

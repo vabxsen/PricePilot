@@ -29,7 +29,29 @@ service cloud.firestore {
 
     match /products/{productId} {
       allow read: if true;
-      allow write: if false; // Admin SDK only
+
+      // A signed-in user may bootstrap a brand-new product doc when adding
+      // a tracker (seeded from the resolver's preview) — but every write
+      // after that (price, stock, history, all-time stats) is Admin SDK
+      // (the scraper) only, so users can never falsify price history.
+      allow create: if isSignedIn()
+        && request.resource.data.trackerCount == 1
+        && request.resource.data.keys().hasAll([
+          'id', 'title', 'retailer', 'url', 'currency',
+          'currentPrice', 'inStock', 'trackerCount', 'checkInterval', 'createdAt'
+        ]);
+
+      // The only client-side update allowed on an existing product is
+      // trackerCount moving by exactly +/-1 (tracking/untracking).
+      allow update: if isSignedIn() && (
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['trackerCount'])
+          && request.resource.data.trackerCount == resource.data.trackerCount + 1)
+        ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['trackerCount'])
+          && request.resource.data.trackerCount == resource.data.trackerCount - 1)
+      );
+
+      allow delete: if false;
 
       match /history/{pointId} {
         allow read: if true;

@@ -1,0 +1,8 @@
+name = "pricepilot-resolver"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+
+# Comma-separated list of allowed browser origins (CORS). Add your Firebase
+# Hosting URL here once deployed, e.g. "https://your-project.web.app".
+[vars]
+ALLOWED_ORIGINS = "http://localhost:5173"

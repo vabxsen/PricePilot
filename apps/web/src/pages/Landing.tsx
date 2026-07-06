@@ -1,26 +1,27 @@
-import { percentDrop } from "@pricepilot/shared";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../lib/auth.js";
 
-/**
- * Landing with the "paste a URL" hero. The resolver is wired in S2;
- * for the S0 scaffold this validates the URL and shows the intended flow.
- */
 export function Landing() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [url, setUrl] = useState("");
-  const [status, setStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  function onSubmit(e: React.FormEvent) {
+  function onSubmit(e: FormEvent) {
     e.preventDefault();
     try {
-      const u = new URL(url);
-      setStatus(`Looks good — we'll resolve ${u.hostname} in S2. Sign in to start tracking.`);
+      new URL(url); // validate before navigating
+      setError(null);
+      if (user) {
+        navigate("/add", { state: { url } });
+      } else {
+        navigate("/login");
+      }
     } catch {
-      setStatus("Please paste a full product URL (including https://).");
+      setError("Please paste a full product URL (including https://).");
     }
   }
-
-  // Illustrative teaser using shared price logic.
-  const exampleDrop = percentDrop(299, 229);
 
   return (
     <section className="mx-auto max-w-3xl text-center">
@@ -49,36 +50,22 @@ export function Landing() {
         </button>
       </form>
 
-      {status && <p className="mt-4 text-sm text-black/70 dark:text-white/70">{status}</p>}
+      {error && <p className="mt-4 text-sm text-danger">{error}</p>}
 
       <div className="mx-auto mt-12 grid max-w-xl grid-cols-3 gap-4 text-left">
-        <Stat label="Example drop" value={`${exampleDrop}%`} tone="success" />
-        <Stat label="Retailers" value="Growing" />
+        <Stat label="Price history" value="Always on" tone="success" />
+        <Stat label="Alerts" value="Free" tone="success" />
         <Stat label="Cost to you" value="$0" tone="success" />
       </div>
     </section>
   );
 }
 
-function Stat({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone?: "success";
-}) {
+function Stat({ label, value, tone }: { label: string; value: string; tone?: "success" }) {
   return (
     <div className="rounded-lg border border-black/5 bg-surface p-4 dark:border-white/10">
-      <div className="text-xs uppercase tracking-wide text-black/40 dark:text-white/40">
-        {label}
-      </div>
-      <div
-        className={`tabular mt-1 text-2xl font-semibold ${
-          tone === "success" ? "text-success" : ""
-        }`}
-      >
+      <div className="text-xs uppercase tracking-wide text-black/40 dark:text-white/40">{label}</div>
+      <div className={`tabular mt-1 text-2xl font-semibold ${tone === "success" ? "text-success" : ""}`}>
         {value}
       </div>
     </div>

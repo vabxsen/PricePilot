@@ -10,12 +10,16 @@
   "workspaces": [
     "packages/*",
     "apps/*",
-    "services/*"
+    "services/*",
+    "workers/*"
   ],
   "scripts": {
     "dev": "npm run dev -w @pricepilot/web",
+    "resolver:dev": "npm run dev -w @pricepilot/resolver",
+    "emulators": "firebase emulators:start --only auth,firestore",
     "build": "npm run build -w @pricepilot/shared && npm run build -w @pricepilot/web",
     "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "scrape": "npm run start -w @pricepilot/scraper",
     "deploy:web": "npm run build -w @pricepilot/web && firebase deploy --only hosting"

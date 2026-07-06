@@ -1,30 +1,38 @@
-import { isFirebaseConfigured } from "../lib/firebase.js";
+import { Link } from "react-router-dom";
+import { ProductCard } from "../components/ProductCard.js";
+import { useAuth } from "../lib/auth.js";
+import { useTrackerList } from "../lib/trackers.js";
 
-/** Watchlist grid — wired to Firestore in S2. Placeholder for S0. */
 export function Dashboard() {
+  const { user } = useAuth();
+  const { trackers, loading } = useTrackerList(user?.uid);
+
   return (
     <section>
-      <h1 className="text-2xl font-bold">Your watchlist</h1>
-      <p className="mt-2 text-black/60 dark:text-white/60">
-        Products you track will appear here with live prices and target progress.
-      </p>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Your watchlist</h1>
+        <Link
+          to="/add"
+          className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+        >
+          + Track a product
+        </Link>
+      </div>
 
-      {!isFirebaseConfigured && (
-        <div className="mt-6 rounded-lg border border-warning/30 bg-warning/10 p-4 text-sm">
-          <strong>Firebase not configured yet.</strong> Add your <code>VITE_FIREBASE_*</code> values
-          to <code>apps/web/.env.local</code> (see <code>.env.example</code>) to enable auth and the
-          live dashboard in S1.
+      {loading && <p className="mt-8 text-black/40 dark:text-white/40">Loading…</p>}
+
+      {!loading && trackers.length === 0 && (
+        <div className="mt-12 rounded-lg border border-dashed border-black/15 p-12 text-center dark:border-white/15">
+          <p className="text-black/60 dark:text-white/60">You're not tracking anything yet.</p>
+          <Link to="/add" className="mt-4 inline-block text-brand hover:underline">
+            Track your first product →
+          </Link>
         </div>
       )}
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="rounded-lg border border-dashed border-black/15 p-8 text-center text-black/40 dark:border-white/15 dark:text-white/40"
-          >
-            Tracked product #{i}
-          </div>
+        {trackers.map((tracker) => (
+          <ProductCard key={tracker.id} tracker={tracker} />
         ))}
       </div>
     </section>

@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@pricepilot/shared": "*",
-    "cheerio": "^1.0.0",
     "firebase-admin": "^13.0.1"
   },
   "devDependencies": {
