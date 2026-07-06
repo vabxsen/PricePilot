@@ -35,7 +35,7 @@ export function ProductListItem({
     product.currentPrice <= tracker.targetPrice;
 
   return (
-    <div className="rounded-lg border border-border/10 bg-surface p-4 transition hover:border-border/20">
+    <div className="min-w-0 rounded-lg border border-border/10 bg-surface p-4 transition hover:border-border/20">
       <div className="flex gap-3">
         <Link to={`/product/${product.id}`} className="shrink-0">
           {product.imageUrl ? (

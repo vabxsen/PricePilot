@@ -18,7 +18,7 @@ export function WishlistCard({
   tracking?: boolean;
 }) {
   return (
-    <div className="flex flex-col rounded-lg border border-border/10 bg-surface p-4 transition hover:border-border/20">
+    <div className="flex min-w-0 flex-col rounded-lg border border-border/10 bg-surface p-4 transition hover:border-border/20">
       <div className="flex gap-3">
         {item.imageUrl ? (
           <img

@@ -24,7 +24,7 @@ export function ProductCard({ tracker }: { tracker: TrackerDoc }) {
   return (
     <Link
       to={`/product/${product.id}`}
-      className="block rounded-lg border border-border/10 bg-surface p-4 transition hover:border-brand/50 hover:bg-surface-raised"
+      className="block min-w-0 rounded-lg border border-border/10 bg-surface p-4 transition hover:border-brand/50 hover:bg-surface-raised"
     >
       <div className="flex gap-3">
         {product.imageUrl && (

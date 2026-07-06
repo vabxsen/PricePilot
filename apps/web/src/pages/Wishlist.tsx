@@ -52,7 +52,7 @@ export function Wishlist() {
       {error && <p className="mt-4 text-sm text-danger">{error}</p>}
 
       {loading && items.length === 0 ? (
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[0, 1, 2].map((i) => (
             <div key={i} className="h-40 animate-pulse rounded-lg border border-border/10 bg-surface" />
           ))}
@@ -74,7 +74,7 @@ export function Wishlist() {
           </Link>
         </div>
       ) : (
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
             <WishlistCard
               key={item.id}

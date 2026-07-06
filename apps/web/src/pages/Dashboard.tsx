@@ -162,7 +162,7 @@ export function Dashboard() {
       </div>
 
       {loading && items.length === 0 && (
-        <div className="mt-8 grid gap-3 sm:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="h-40 animate-pulse rounded-lg border border-border/10 bg-surface" />
           <div className="h-40 animate-pulse rounded-lg border border-border/10 bg-surface" />
         </div>
@@ -187,7 +187,7 @@ export function Dashboard() {
       )}
 
       {items.length > 0 && (
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Recent price drops */}
           <div className="rounded-lg border border-border/10 bg-surface p-4">
             <SectionHeader title="Recent price drops" to="/products" cta="All products" />
@@ -225,7 +225,7 @@ export function Dashboard() {
       {/* Quick actions */}
       <div className="mt-8">
         <SectionHeader title="Quick actions" />
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {quickActions.map(({ to, label, desc, icon: Icon, accent }) => (
             <Link
               key={to}

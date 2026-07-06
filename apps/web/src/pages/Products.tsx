@@ -151,7 +151,7 @@ export function Products() {
           No products match your search or filter.
         </p>
       ) : (
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {visible.map((item) => (
             <ProductListItem
               key={item.tracker.id}

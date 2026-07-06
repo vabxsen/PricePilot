@@ -44,6 +44,18 @@ body,
   height: 100%;
 }
 
+html {
+  /*
+   * Safety net: if any component ever overflows its container (e.g. a grid
+   * item sized by a long unbreakable string instead of its track — the
+   * exact bug this once caused), this stops it from widening the whole
+   * document and dragging mobile browsers into a zoomed-out desktop-style
+   * layout. Intentional horizontal scrollers (e.g. the filter pill row) use
+   * their own `overflow-x-auto` and are unaffected.
+   */
+  overflow-x: hidden;
+}
+
 body {
   background-color: var(--color-bg);
   color: var(--color-ink);
