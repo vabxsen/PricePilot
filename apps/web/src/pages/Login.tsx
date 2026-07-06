@@ -1,12 +1,12 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { Button } from "../components/ui/Button.js";
 import { Input } from "../components/ui/Input.js";
-import { signInWithEmail, signInWithGoogle, signUpWithEmail } from "../lib/auth.js";
+import { signInWithEmail, signInWithGoogle, signUpWithEmail, useAuth } from "../lib/auth.js";
 import { isFirebaseConfigured } from "../lib/firebase.js";
 
 export function Login() {
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,10 +18,9 @@ export function Login() {
     setBusy(true);
     try {
       await signInWithGoogle();
-      navigate("/dashboard");
+      // Redirect happens declaratively once auth state updates (see below).
     } catch (err) {
       setError((err as Error).message);
-    } finally {
       setBusy(false);
     }
   }
@@ -33,13 +32,16 @@ export function Login() {
     try {
       if (mode === "signup") await signUpWithEmail(email, password);
       else await signInWithEmail(email, password);
-      navigate("/dashboard");
     } catch (err) {
       setError((err as Error).message);
-    } finally {
       setBusy(false);
     }
   }
+
+  // As soon as the auth context reflects a signed-in user, leave the login
+  // page. Doing this declaratively (instead of navigate() right after the
+  // await) avoids racing Firebase's onAuthStateChanged.
+  if (user) return <Navigate to="/dashboard" replace />;
 
   return (
     <section className="mx-auto max-w-sm">
