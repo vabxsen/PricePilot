@@ -182,47 +182,46 @@ export function Dashboard() {
 
       {items.length > 0 && (
         <>
-          <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-2">
-            {/* Recent price drops */}
-            <div className="rounded-lg border border-border/10 bg-surface p-4">
-              <SectionHeader title="Recent price drops" to="/products" cta="All products" />
-              {drops.length === 0 ? (
-                <p className="px-2 py-5 text-center text-sm text-ink-faint">
-                  No drops yet — check back soon.
-                </p>
-              ) : (
-                <div className="-mx-2">
-                  {drops.slice(0, 5).map((item) => (
-                    <DropRow key={item.tracker.id} item={item} />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Active price targets */}
-            <div className="rounded-lg border border-border/10 bg-surface p-4">
-              <SectionHeader title="Active alerts" />
-              {targets.length === 0 ? (
-                <p className="px-2 py-5 text-center text-sm text-ink-faint">
-                  Set a target price to track progress here.
-                </p>
-              ) : (
-                <div className="space-y-2">
-                  {targets.slice(0, 5).map((item) => (
-                    <TargetCard key={item.tracker.id} item={item} />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-5 flex sm:justify-end">
+          {/* Track a product — now where Recent price drops used to sit */}
+          <div className="mt-10 flex">
             <Link
               to="/add"
               className={`${buttonClasses("primary", "md")} inline-flex w-full items-center justify-center gap-2 sm:w-auto`}
             >
               <IconPlus size={18} /> Track a product
             </Link>
+          </div>
+
+          {/* Active price targets */}
+          <div className="mt-5 rounded-lg border border-border/10 bg-surface p-4">
+            <SectionHeader title="Active alerts" />
+            {targets.length === 0 ? (
+              <p className="px-2 py-5 text-center text-sm text-ink-faint">
+                Set a target price to track progress here.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {targets.slice(0, 5).map((item) => (
+                  <TargetCard key={item.tracker.id} item={item} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Recent price drops — moved to the bottom */}
+          <div className="mt-5 rounded-lg border border-border/10 bg-surface p-4">
+            <SectionHeader title="Recent price drops" to="/products" cta="All products" />
+            {drops.length === 0 ? (
+              <p className="px-2 py-5 text-center text-sm text-ink-faint">
+                No drops yet — check back soon.
+              </p>
+            ) : (
+              <div className="-mx-2">
+                {drops.slice(0, 5).map((item) => (
+                  <DropRow key={item.tracker.id} item={item} />
+                ))}
+              </div>
+            )}
           </div>
         </>
       )}
