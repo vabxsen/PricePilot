@@ -262,25 +262,27 @@ export interface AmazonExtractResult {
 /**
  * Extract a product snapshot from a raw Amazon product page. Returns
  * `snapshot: null` (with a `reason`) when the page is a bot-check/CAPTCHA
- * interstitial or its markup wasn't recognized at all (no title AND no
- * price found) — a strong signal the page genuinely couldn't be read,
- * rather than a real listing that simply has no price.
+ * interstitial, or when it has no `#productTitle` — which only ever appears
+ * on a real single-product detail page. Requiring it (rather than "no title
+ * AND no price") matters: search/category/cart pages have no title but
+ * often DO contain stray `.a-price` fragments from listed items, which
+ * would otherwise be misread as a real product's price.
  */
 export function extractAmazonProduct(html: string, hostname: string): AmazonExtractResult {
   const botCheck = detectBotCheck(html);
   if (botCheck) return { snapshot: null, reason: botCheck };
 
   const title = extractTitle(html);
-  const { current, original, symbol } = extractPrices(html);
-
-  if (!title && current === null) {
+  if (!title) {
     return {
       snapshot: null,
       reason:
-        "Amazon markup not recognized — no #productTitle and no price element found " +
-        "(the page layout may have changed, or this isn't a product page)",
+        "No #productTitle found — this isn't a single-product Amazon page " +
+        "(e.g. a search/category page), or the page layout has changed",
     };
   }
+
+  const { current, original, symbol } = extractPrices(html);
 
   const savingsFromPage = extractSavingsPercent(html);
   const discountPercent =

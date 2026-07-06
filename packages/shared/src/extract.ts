@@ -147,12 +147,13 @@ export function extractProductSnapshot(html: string, url: string): ProductExtrac
   if (hostname && isAmazonHostname(hostname)) {
     const { snapshot, reason } = extractAmazonProduct(html, hostname);
     if (snapshot) return { snapshot, reason: null };
-    // Amazon-specific extraction found nothing usable (most likely a
-    // bot-check page) — try the generic tiers as a last resort before
-    // reporting the original, more specific reason.
-    const generic = extractPriceFromHtml(html);
-    if (generic.title || generic.price !== null) return { snapshot: generic, reason: null };
-    return { snapshot: generic, reason };
+    // Deliberately do NOT fall back to the generic JSON-LD/OpenGraph tiers
+    // here. Amazon search/category/cart pages have no #productTitle (so the
+    // Amazon extractor correctly rejects them) but often DO embed JSON-LD
+    // Product markup for the individual listed items (for Google rich
+    // snippets) — a generic fallback would silently return a real price for
+    // the WRONG product. Trust the Amazon-specific verdict.
+    return { snapshot: { price: null, inStock: false, source: "selector" }, reason };
   }
 
   const generic = extractPriceFromHtml(html);

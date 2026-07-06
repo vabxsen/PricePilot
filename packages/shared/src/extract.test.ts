@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractPriceFromHtml } from "./extract.js";
+import { extractPriceFromHtml, extractProductSnapshot } from "./extract.js";
 
 function jsonLdHtml(json: unknown): string {
   return `<html><head><script type="application/ld+json">${JSON.stringify(json)}</script></head><body></body></html>`;
@@ -79,5 +79,35 @@ describe("extractPriceFromHtml", () => {
   it("ignores malformed JSON-LD blocks instead of throwing", () => {
     const html = `<html><head><script type="application/ld+json">{not valid json</script></head></html>`;
     expect(() => extractPriceFromHtml(html)).not.toThrow();
+  });
+});
+
+describe("extractProductSnapshot", () => {
+  it("does not fall back to generic JSON-LD for a rejected Amazon page, even if it embeds another product's structured data", () => {
+    // A real amazon.in search page has no #productTitle (not a single-product
+    // page) but DOES embed JSON-LD Product markup for the listed items (for
+    // Google rich snippets). Falling back to the generic tier here would
+    // silently attribute a real but unrelated product's price to this URL.
+    const html = jsonLdHtml({
+      "@type": "Product",
+      name: "Some Other Listed Item",
+      offers: { "@type": "Offer", price: 599, priceCurrency: "INR", availability: "https://schema.org/InStock" },
+    });
+    const { snapshot, reason } = extractProductSnapshot(html, "https://www.amazon.in/s?k=test");
+    expect(snapshot.title).toBeUndefined();
+    expect(snapshot.price).toBeNull();
+    expect(reason).toMatch(/no #producttitle/i);
+  });
+
+  it("still uses the generic tiers for non-Amazon retailers", () => {
+    const html = jsonLdHtml({
+      "@type": "Product",
+      name: "Wireless Headphones",
+      offers: { "@type": "Offer", price: 49.99, priceCurrency: "USD", availability: "https://schema.org/InStock" },
+    });
+    const { snapshot, reason } = extractProductSnapshot(html, "https://example-shop.com/p/1");
+    expect(reason).toBeNull();
+    expect(snapshot.title).toBe("Wireless Headphones");
+    expect(snapshot.price).toBe(49.99);
   });
 });

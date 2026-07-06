@@ -122,7 +122,23 @@ describe("extractAmazonProduct", () => {
     const html = "<html><body><p>This is not an Amazon product page.</p></body></html>";
     const { snapshot, reason } = extractAmazonProduct(html, "amazon.com");
     expect(snapshot).toBeNull();
-    expect(reason).toMatch(/not recognized/i);
+    expect(reason).toMatch(/no #producttitle/i);
+  });
+
+  it("rejects a search/listing page even when it contains stray price fragments (real-world false-positive found live)", () => {
+    // A live amazon.in search-results page has no #productTitle but DOES
+    // contain .a-price/.a-offscreen fragments from the listed items — this
+    // used to be misread as a valid (garbage) product before title became
+    // a hard requirement.
+    const html = `<html><body>
+      <div class="s-result-item">
+        <span class="a-price"><span class="a-offscreen">₹1</span></span>
+        <span class="a-price a-text-price"><span class="a-offscreen">₹599</span></span>
+      </div>
+    </body></html>`;
+    const { snapshot, reason } = extractAmazonProduct(html, "amazon.in");
+    expect(snapshot).toBeNull();
+    expect(reason).toMatch(/no #producttitle/i);
   });
 
   it("still returns a snapshot when title is found but price is genuinely absent", () => {
