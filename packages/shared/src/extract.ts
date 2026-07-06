@@ -1,3 +1,5 @@
+import { extractAmazonProduct, isAmazonHostname } from "./amazon.js";
+import { decodeHtmlEntities, toNumber } from "./html-utils.js";
 import type { PriceSnapshot } from "./types.js";
 
 /**
@@ -6,40 +8,6 @@ import type { PriceSnapshot } from "./types.js";
  * the edge (the Cloudflare Worker resolver, which has no DOM/cheerio).
  * Tier 1: schema.org JSON-LD Product/Offer. Tier 2: OpenGraph product meta.
  */
-
-const NAMED_ENTITIES: Record<string, string> = {
-  quot: '"',
-  amp: "&",
-  apos: "'",
-  lt: "<",
-  gt: ">",
-  nbsp: " ",
-};
-
-/**
- * Some retailers HTML-escape text inside their JSON-LD blocks (invalid per
- * spec, but common in the wild — e.g. `16&quot;` instead of `16"`). Decode
- * the common named/numeric entities so titles render correctly.
- */
-function decodeHtmlEntities(text: string): string {
-  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity: string) => {
-    if (entity[0] === "#") {
-      const code =
-        entity[1]?.toLowerCase() === "x" ? Number.parseInt(entity.slice(2), 16) : Number.parseInt(entity.slice(1), 10);
-      return Number.isFinite(code) ? String.fromCodePoint(code) : match;
-    }
-    return NAMED_ENTITIES[entity.toLowerCase()] ?? match;
-  });
-}
-
-function toNumber(v: unknown): number | null {
-  if (typeof v === "number" && Number.isFinite(v)) return v;
-  if (typeof v === "string") {
-    const n = Number.parseFloat(v.replace(/[^0-9.]/g, ""));
-    return Number.isFinite(n) ? n : null;
-  }
-  return null;
-}
 
 interface OfferHit {
   product: Record<string, unknown>;
@@ -147,4 +115,52 @@ export function extractPriceFromHtml(html: string): PriceSnapshot {
   }
 
   return { price: null, inStock: false, source: "jsonld" };
+}
+
+export interface ProductExtractResult {
+  snapshot: PriceSnapshot;
+  /**
+   * Non-null only when extraction essentially failed — no title AND no
+   * price were found anywhere (bot-check/CAPTCHA page, unsupported markup,
+   * or a non-product page). A human-readable reason for logs and for
+   * surfacing a real error instead of a blank "Untitled product" result.
+   */
+  reason: string | null;
+}
+
+/**
+ * Retailer-aware entry point. Amazon pages rarely carry JSON-LD/OpenGraph
+ * product data, so recognized Amazon URLs go through a dedicated DOM-pattern
+ * extractor (see amazon.ts) before falling back to the generic tiers below.
+ * Reports a `reason` when nothing usable was found at all, so callers (the
+ * resolver Worker, the scraper) can log the exact cause and avoid silently
+ * returning placeholder data for a page that truly couldn't be read.
+ */
+export function extractProductSnapshot(html: string, url: string): ProductExtractResult {
+  let hostname = "";
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    // malformed url — fall through to generic extraction below
+  }
+
+  if (hostname && isAmazonHostname(hostname)) {
+    const { snapshot, reason } = extractAmazonProduct(html, hostname);
+    if (snapshot) return { snapshot, reason: null };
+    // Amazon-specific extraction found nothing usable (most likely a
+    // bot-check page) — try the generic tiers as a last resort before
+    // reporting the original, more specific reason.
+    const generic = extractPriceFromHtml(html);
+    if (generic.title || generic.price !== null) return { snapshot: generic, reason: null };
+    return { snapshot: generic, reason };
+  }
+
+  const generic = extractPriceFromHtml(html);
+  if (!generic.title && generic.price === null) {
+    return {
+      snapshot: generic,
+      reason: "No JSON-LD Product/Offer or OpenGraph product meta tags found on this page",
+    };
+  }
+  return { snapshot: generic, reason: null };
 }

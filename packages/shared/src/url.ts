@@ -1,3 +1,5 @@
+import { isAmazonHostname } from "./amazon.js";
+
 const TRACKING_PARAMS = new Set([
   "utm_source",
   "utm_medium",
@@ -63,6 +65,7 @@ const RETAILER_NAMES: Record<string, string> = {
 /** Human-friendly retailer name derived from the hostname. */
 export function retailerNameFromUrl(url: string): string {
   const host = new URL(url).hostname.toLowerCase().replace(/^www\./, "");
+  if (isAmazonHostname(host)) return "Amazon";
   if (RETAILER_NAMES[host]) return RETAILER_NAMES[host];
   const base = host.split(".").slice(-2, -1)[0] ?? host;
   return base.charAt(0).toUpperCase() + base.slice(1);

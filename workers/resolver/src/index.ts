@@ -1,4 +1,4 @@
-import { extractPriceFromHtml, retailerNameFromUrl } from "@pricepilot/shared";
+import { extractProductSnapshot, retailerNameFromUrl } from "@pricepilot/shared";
 
 /**
  * Stateless resolver: fetches a product URL and returns a parsed price
@@ -117,9 +117,30 @@ export default {
         html += decoder.decode(value, { stream: true });
       }
 
-      const snapshot = extractPriceFromHtml(html);
+      // Use the post-redirect URL (fetch follows redirects transparently) so
+      // short links (amzn.in, amzn.to, a.co) canonicalize to the real product
+      // URL instead of storing the short link as the tracked target.
+      const finalUrl = res.url || target.toString();
+
+      const { snapshot, reason } = extractProductSnapshot(html, finalUrl);
+      if (reason) {
+        console.error(`[resolver] extraction failed for ${finalUrl}: ${reason}`);
+        return json(
+          {
+            error:
+              `Could not read product details from this page: ${reason}. ` +
+              "The retailer may be blocking automated requests, or this isn't a supported product page.",
+          },
+          422,
+          headers,
+        );
+      }
+
+      console.log(
+        `[resolver] resolved ${finalUrl} via ${snapshot.source} (title=${!!snapshot.title}, price=${snapshot.price})`,
+      );
       return json(
-        { ...snapshot, retailer: retailerNameFromUrl(target.toString()), url: target.toString() },
+        { ...snapshot, retailer: retailerNameFromUrl(finalUrl), url: finalUrl },
         200,
         headers,
       );

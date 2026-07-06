@@ -96,13 +96,28 @@ export function AddProduct() {
             <div className="flex-1">
               <div className="font-medium text-ink">{preview.title ?? "Untitled product"}</div>
               <div className="text-sm text-ink-faint">{preview.retailer}</div>
-              <div className="tabular mt-1 text-xl font-semibold text-ink">
-                {preview.price !== null
-                  ? new Intl.NumberFormat("en-US", {
+              <div className="mt-1 flex flex-wrap items-baseline gap-2">
+                <span className="tabular text-xl font-semibold text-ink">
+                  {preview.price !== null
+                    ? new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: preview.currency ?? "USD",
+                      }).format(preview.price)
+                    : "Price unavailable"}
+                </span>
+                {preview.originalPrice != null && preview.originalPrice > (preview.price ?? 0) && (
+                  <span className="tabular text-sm text-ink-faint line-through">
+                    {new Intl.NumberFormat("en-US", {
                       style: "currency",
                       currency: preview.currency ?? "USD",
-                    }).format(preview.price)
-                  : "Price unavailable"}
+                    }).format(preview.originalPrice)}
+                  </span>
+                )}
+                {preview.discountPercent != null && preview.discountPercent > 0 && (
+                  <span className="rounded-full bg-brand/15 px-2 py-0.5 text-xs font-medium text-brand">
+                    {preview.discountPercent}% off
+                  </span>
+                )}
               </div>
             </div>
           </div>

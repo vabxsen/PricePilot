@@ -203,6 +203,8 @@ export async function addTrackerForProduct(
         url: resolved.url,
         currency: resolved.currency ?? "USD",
         currentPrice: resolved.price,
+        originalPrice: resolved.originalPrice,
+        discountPercent: resolved.discountPercent,
         inStock: resolved.inStock,
         allTimeLow: resolved.price ?? undefined,
         allTimeHigh: resolved.price ?? undefined,

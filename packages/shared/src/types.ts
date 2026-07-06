@@ -69,6 +69,10 @@ export const ProductDoc = z.object({
   externalId: z.string().optional(),
   currency: z.string().length(3),
   currentPrice: z.number().nonnegative().nullable(),
+  /** Pre-discount list price (e.g. Amazon's "M.R.P."), when the retailer shows one. */
+  originalPrice: z.number().nonnegative().nullable().optional(),
+  /** 0-100 discount off originalPrice, when known (from the page or computed). */
+  discountPercent: z.number().min(0).max(100).nullable().optional(),
   inStock: z.boolean().default(true),
   allTimeLow: z.number().nonnegative().nullable().optional(),
   allTimeHigh: z.number().nonnegative().nullable().optional(),
@@ -133,6 +137,10 @@ export const PriceSnapshot = z.object({
   brand: z.string().optional(),
   imageUrl: z.string().url().optional(),
   price: z.number().nonnegative().nullable(),
+  /** Pre-discount list price (e.g. Amazon's "M.R.P."), when the retailer shows one. */
+  originalPrice: z.number().nonnegative().nullable().optional(),
+  /** 0-100 discount off originalPrice, when known (from the page or computed). */
+  discountPercent: z.number().min(0).max(100).nullable().optional(),
   currency: z.string().length(3).optional(),
   inStock: z.boolean(),
   source: PriceSource,

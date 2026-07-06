@@ -51,9 +51,21 @@ export function ProductDetail() {
           <div>
             <h1 className="text-2xl font-bold text-ink">{product.title}</h1>
             <p className="text-ink-faint">{product.retailer}</p>
-            <p className="tabular mt-1 text-3xl font-semibold text-ink">
-              {product.currentPrice !== null ? fmt.format(product.currentPrice) : "—"}
-            </p>
+            <div className="mt-1 flex flex-wrap items-baseline gap-2">
+              <span className="tabular text-3xl font-semibold text-ink">
+                {product.currentPrice !== null ? fmt.format(product.currentPrice) : "—"}
+              </span>
+              {product.originalPrice != null && product.originalPrice > (product.currentPrice ?? 0) && (
+                <span className="tabular text-base text-ink-faint line-through">
+                  {fmt.format(product.originalPrice)}
+                </span>
+              )}
+              {product.discountPercent != null && product.discountPercent > 0 && (
+                <span className="rounded-full bg-brand/15 px-2 py-0.5 text-xs font-medium text-brand">
+                  {product.discountPercent}% off
+                </span>
+              )}
+            </div>
             {tracker?.targetPrice != null && (
               <p className="tabular mt-1 text-sm text-ink-muted">
                 Target: <span className="text-brand">{fmt.format(tracker.targetPrice)}</span>

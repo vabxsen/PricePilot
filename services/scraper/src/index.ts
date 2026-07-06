@@ -69,6 +69,11 @@ async function main() {
         lastCheckedAt: now,
         nextCheckAt: now + product.checkInterval * 1000,
       };
+      // Only set these when the scrape actually reported a value — Admin SDK
+      // rejects literal `undefined` field values, and most non-Amazon
+      // adapters simply don't populate them.
+      if (snap.originalPrice !== undefined) update.originalPrice = snap.originalPrice;
+      if (snap.discountPercent !== undefined) update.discountPercent = snap.discountPercent;
       if (price !== null) {
         update.allTimeLow =
           product.allTimeLow == null ? price : Math.min(product.allTimeLow, price);

@@ -33,8 +33,15 @@ export function ProductCard({ tracker }: { tracker: TrackerDoc }) {
         <div className="min-w-0 flex-1">
           <div className="truncate font-medium text-ink">{product.title}</div>
           <div className="text-xs text-ink-faint">{product.retailer}</div>
-          <div className="tabular mt-1 text-lg font-semibold text-ink">
-            {product.currentPrice !== null ? fmt.format(product.currentPrice) : "—"}
+          <div className="mt-1 flex flex-wrap items-baseline gap-1.5">
+            <span className="tabular text-lg font-semibold text-ink">
+              {product.currentPrice !== null ? fmt.format(product.currentPrice) : "—"}
+            </span>
+            {product.discountPercent != null && product.discountPercent > 0 && (
+              <span className="rounded-full bg-brand/15 px-1.5 py-0.5 text-[11px] font-medium text-brand">
+                {product.discountPercent}% off
+              </span>
+            )}
           </div>
           {product.currentPrice !== null && (
             <Delta from={tracker.priceAtAdd} to={product.currentPrice} currency={product.currency} />
