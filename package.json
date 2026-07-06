@@ -1,0 +1,26 @@
+{
+  "name": "pricepilot",
+  "private": true,
+  "version": "0.0.0",
+  "description": "PricePilot — track any product's price across the web, get alerted when it drops.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @pricepilot/web",
+    "build": "npm run build -w @pricepilot/shared && npm run build -w @pricepilot/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "scrape": "npm run start -w @pricepilot/scraper",
+    "deploy:web": "npm run build -w @pricepilot/web && firebase deploy --only hosting"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,40 @@
+rules_version = '2';
+
+// PricePilot Firestore security model (Spark MVP).
+// - Users may read/write ONLY their own data under users/{uid}.
+// - products/** is world-readable (public price history) but writable
+//   only by the Admin SDK (the scraper) — never by clients.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+
+      match /trackers/{trackerId} {
+        allow read, write: if isOwner(uid);
+      }
+      match /notifications/{notifId} {
+        // Clients can read/dismiss; the scraper writes via Admin SDK (bypasses rules).
+        allow read, update, delete: if isOwner(uid);
+        allow create: if false;
+      }
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false; // Admin SDK only
+
+      match /history/{pointId} {
+        allow read: if true;
+        allow write: if false; // Admin SDK only
+      }
+    }
+  }
+}

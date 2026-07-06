@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens — HSL channels so Tailwind's <alpha-value> works.
+   Light theme defaults; dark theme overrides on the .dark class. */
+:root {
+  --brand-primary: 217 91% 60%; /* #2563EB-ish */
+  --brand-accent: 189 94% 43%; /* cyan-500 */
+  --success: 142 71% 45%;
+  --warning: 32 95% 44%;
+  --danger: 0 72% 51%;
+  --bg: 210 40% 98%;
+  --surface: 0 0% 100%;
+  --text: 222 47% 11%;
+}
+
+.dark {
+  --brand-primary: 217 91% 65%;
+  --brand-accent: 187 92% 53%;
+  --success: 142 69% 58%;
+  --warning: 38 92% 50%;
+  --danger: 0 84% 60%;
+  --bg: 222 47% 6%;
+  --surface: 222 40% 11%;
+  --text: 214 32% 91%;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: hsl(var(--bg));
+  color: hsl(var(--text));
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Prices always align in columns. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}

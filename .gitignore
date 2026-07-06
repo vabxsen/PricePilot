@@ -37,6 +37,12 @@ coverage/
 playwright-report/
 test-results/
 
+# Firebase
+.firebase/
+firebase-debug.log
+*-debug.log
+serviceAccount*.json
+
 # Misc
 *.local
 .cache/
