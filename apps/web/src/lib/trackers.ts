@@ -50,6 +50,62 @@ export function useTrackerList(uid: string | undefined) {
   return { trackers, loading };
 }
 
+export interface TrackedItem {
+  tracker: TrackerDoc;
+  /** null while the product doc is still loading or if it was deleted. */
+  product: ProductDoc | null;
+}
+
+/**
+ * Live join of the user's trackers with their product docs — one place for
+ * pages that need to aggregate across the whole watchlist (Dashboard stats,
+ * Products list) without mounting a component per row.
+ */
+export function useTrackedProducts(uid: string | undefined) {
+  const { trackers, loading: trackersLoading } = useTrackerList(uid);
+  const [products, setProducts] = useState<Record<string, ProductDoc | null>>({});
+
+  const idsKey = Array.from(new Set(trackers.map((t) => t.productId)))
+    .sort()
+    .join(",");
+
+  useEffect(() => {
+    const ids = idsKey ? idsKey.split(",") : [];
+    if (ids.length === 0) {
+      setProducts({});
+      return;
+    }
+    const db = getDb();
+    const unsubs = ids.map((id) =>
+      onSnapshot(doc(db, "products", id), (snap) => {
+        setProducts((prev) => {
+          const next = { ...prev };
+          if (!snap.exists()) {
+            next[id] = null;
+          } else {
+            const result = ProductDoc.safeParse({ id: snap.id, ...snap.data() });
+            next[id] = result.success ? result.data : null;
+          }
+          return next;
+        });
+      }),
+    );
+    return () => unsubs.forEach((u) => u());
+  }, [idsKey]);
+
+  const items: TrackedItem[] = trackers.map((tracker) => ({
+    tracker,
+    product: products[tracker.productId] ?? null,
+  }));
+
+  // Still loading if trackers are loading, or we have trackers but haven't
+  // received the first snapshot for any of their products yet.
+  const loading =
+    trackersLoading || (trackers.length > 0 && Object.keys(products).length === 0);
+
+  return { items, loading };
+}
+
 /** Live product doc — updates automatically when the scraper writes a new price. */
 export function useProduct(productId: string | undefined) {
   const [product, setProduct] = useState<ProductDoc | null>(null);

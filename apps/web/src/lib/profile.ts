@@ -41,3 +41,15 @@ export async function updateUserProfile(
 ): Promise<void> {
   await setDoc(doc(getDb(), "users", uid), updates, { merge: true });
 }
+
+/**
+ * Merge-writes notification preferences. `setDoc({ merge: true })` deep-merges
+ * the nested `notificationPrefs` map, so passing just `{ email }` leaves
+ * `webPush` untouched.
+ */
+export async function updateNotificationPrefs(
+  uid: string,
+  prefs: Partial<{ email: boolean; webPush: boolean }>,
+): Promise<void> {
+  await setDoc(doc(getDb(), "users", uid), { notificationPrefs: prefs }, { merge: true });
+}

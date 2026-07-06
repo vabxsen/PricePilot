@@ -8,6 +8,7 @@ import { Dashboard } from "./pages/Dashboard.js";
 import { Landing } from "./pages/Landing.js";
 import { Login } from "./pages/Login.js";
 import { ProductDetail } from "./pages/ProductDetail.js";
+import { Products } from "./pages/Products.js";
 import { Settings } from "./pages/Settings.js";
 
 function PublicNav() {
@@ -86,6 +87,16 @@ export function App() {
           <ProtectedRoute>
             <AppShell>
               <Dashboard />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/products"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <Products />
             </AppShell>
           </ProtectedRoute>
         }
