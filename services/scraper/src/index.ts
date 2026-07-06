@@ -53,10 +53,16 @@ async function main() {
       const priceChanged = price !== product.currentPrice;
       const stockChanged = snap.inStock !== product.inStock;
 
-      if (priceChanged || stockChanged) {
+      // Seed the very first history point on a product's first successful
+      // check, even if nothing "changed" — otherwise a product's chart stays
+      // empty until its price happens to move. Detected by the absence of any
+      // existing history doc (one cheap read per due product).
+      const hasHistory = !(await doc.ref.collection("history").limit(1).get()).empty;
+
+      if (price !== null && (priceChanged || stockChanged || !hasHistory)) {
         await doc.ref.collection("history").add({
           ts: now,
-          price: price ?? product.currentPrice ?? 0,
+          price,
           inStock: snap.inStock,
           source: snap.source,
         });
@@ -84,7 +90,13 @@ async function main() {
     } catch (err) {
       failed++;
       console.error(`[scrape] failed ${product.id} (${product.url}):`, (err as Error).message);
-      await scheduleNext(doc.ref, product, now);
+      // Never let a reschedule error escape the per-product boundary and fail
+      // the whole run — one bad product must not block every other one.
+      try {
+        await scheduleNext(doc.ref, product, now);
+      } catch (rescheduleErr) {
+        console.error(`[scrape] could not reschedule ${product.id}:`, rescheduleErr);
+      }
     }
   }
 

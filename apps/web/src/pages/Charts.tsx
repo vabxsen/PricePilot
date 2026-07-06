@@ -1,5 +1,10 @@
-import { computeStats, type PricePoint } from "@pricepilot/shared";
-import { useEffect, useMemo, useState } from "react";
+import {
+  computeStats,
+  type PricePoint,
+  type ProductDoc,
+  type TrackerDoc,
+} from "@pricepilot/shared";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { PriceHistoryChart } from "../components/PriceHistoryChart.js";
 import { buttonClasses } from "../components/ui/Button.js";
@@ -30,6 +35,54 @@ interface DropEvent {
   from: number;
   to: number;
   pct: number;
+}
+
+/**
+ * Real Firebase history is only recorded by the scraper, and only when a
+ * price *changes* — so a freshly-tracked (or stable-priced) product has no
+ * points to plot yet. Bracket the real series with what we already know for
+ * certain: the price when the user started tracking (`priceAtAdd` at the
+ * tracker's `createdAt`) and the latest known price (`currentPrice`). This
+ * seeds the chart with real, owned data immediately and blends seamlessly
+ * as the scraper records genuine changes over time. Purely presentational —
+ * nothing is written to Firestore (history stays Admin-SDK-only).
+ */
+function seedSeries(
+  history: PricePoint[],
+  tracker: TrackerDoc | null,
+  product: ProductDoc | null,
+): PricePoint[] {
+  const points: PricePoint[] = [...history];
+
+  if (tracker && tracker.priceAtAdd > 0) {
+    const first = points[0];
+    if (!first || tracker.createdAt < first.ts) {
+      points.unshift({
+        ts: tracker.createdAt,
+        price: tracker.priceAtAdd,
+        inStock: true,
+        source: "manual",
+      });
+    }
+  }
+
+  if (product && product.currentPrice != null) {
+    const last = points[points.length - 1];
+    const nowTs = product.lastCheckedAt ?? Date.now();
+    // Append the current price when it differs from the last point, or extend
+    // a flat line to "now" when it's unchanged — either way avoids a lonely
+    // single dot for a just-tracked product.
+    if (!last || last.price !== product.currentPrice || nowTs > last.ts) {
+      points.push({
+        ts: Math.max(nowTs, (last?.ts ?? 0) + 1),
+        price: product.currentPrice,
+        inStock: product.inStock,
+        source: "manual",
+      });
+    }
+  }
+
+  return points;
 }
 
 /** Consecutive points where the price fell, most recent first. */
@@ -84,19 +137,22 @@ export function Charts() {
   }, [items, selectedId]);
 
   const selected = items.find((i) => i.product?.id === selectedId);
+  const selectedProduct = selected?.product ?? null;
+  const selectedTracker = selected?.tracker ?? null;
   const { history } = useProductHistory(selectedId ?? undefined);
 
-  const view = useMemo(() => {
+  const view = (() => {
+    const series = seedSeries(history, selectedTracker, selectedProduct);
     const days = RANGE_DAYS[range];
     const cutoff = Number.isFinite(days) ? Date.now() - days * 86_400_000 : -Infinity;
-    const filtered = history.filter((h) => h.ts >= cutoff);
+    const filtered = series.filter((h) => h.ts >= cutoff);
     const stats = computeStats(filtered);
     const first = filtered[0];
     const last = filtered[filtered.length - 1];
     const changePct =
       first && last && first.price > 0 ? ((last.price - first.price) / first.price) * 100 : 0;
     return { filtered, stats, changePct, events: dropEvents(filtered) };
-  }, [history, range]);
+  })();
 
   if (loading && items.length === 0) {
     return (
