@@ -7,6 +7,31 @@ import type { PriceSnapshot } from "./types.js";
  * Tier 1: schema.org JSON-LD Product/Offer. Tier 2: OpenGraph product meta.
  */
 
+const NAMED_ENTITIES: Record<string, string> = {
+  quot: '"',
+  amp: "&",
+  apos: "'",
+  lt: "<",
+  gt: ">",
+  nbsp: " ",
+};
+
+/**
+ * Some retailers HTML-escape text inside their JSON-LD blocks (invalid per
+ * spec, but common in the wild — e.g. `16&quot;` instead of `16"`). Decode
+ * the common named/numeric entities so titles render correctly.
+ */
+function decodeHtmlEntities(text: string): string {
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity: string) => {
+    if (entity[0] === "#") {
+      const code =
+        entity[1]?.toLowerCase() === "x" ? Number.parseInt(entity.slice(2), 16) : Number.parseInt(entity.slice(1), 10);
+      return Number.isFinite(code) ? String.fromCodePoint(code) : match;
+    }
+    return NAMED_ENTITIES[entity.toLowerCase()] ?? match;
+  });
+}
+
 function toNumber(v: unknown): number | null {
   if (typeof v === "number" && Number.isFinite(v)) return v;
   if (typeof v === "string") {
@@ -98,8 +123,8 @@ export function extractPriceFromHtml(html: string): PriceSnapshot {
         : undefined;
 
     return {
-      title: typeof product["name"] === "string" ? (product["name"] as string) : undefined,
-      brand,
+      title: typeof product["name"] === "string" ? decodeHtmlEntities(product["name"]) : undefined,
+      brand: brand ? decodeHtmlEntities(brand) : undefined,
       imageUrl,
       price,
       currency: typeof offer["priceCurrency"] === "string" ? (offer["priceCurrency"] as string) : undefined,
@@ -110,8 +135,9 @@ export function extractPriceFromHtml(html: string): PriceSnapshot {
 
   const ogPrice = toNumber(metaContent(html, "product:price:amount"));
   if (ogPrice !== null) {
+    const ogTitle = metaContent(html, "og:title");
     return {
-      title: metaContent(html, "og:title"),
+      title: ogTitle ? decodeHtmlEntities(ogTitle) : undefined,
       imageUrl: metaContent(html, "og:image"),
       price: ogPrice,
       currency: metaContent(html, "product:price:currency"),

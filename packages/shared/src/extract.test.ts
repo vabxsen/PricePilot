@@ -64,6 +64,18 @@ describe("extractPriceFromHtml", () => {
     expect(snap.inStock).toBe(false);
   });
 
+  it("decodes HTML entities some retailers wrongly embed in JSON-LD text", () => {
+    const html = jsonLdHtml({
+      "@type": "Product",
+      name: "ASUS TUF Gaming Laptop, 16&quot;(40 cm), &amp; Windows 11",
+      brand: { name: "ASUS &amp; Co" },
+      offers: { "@type": "Offer", price: 99990, priceCurrency: "INR", availability: "https://schema.org/InStock" },
+    });
+    const snap = extractPriceFromHtml(html);
+    expect(snap.title).toBe('ASUS TUF Gaming Laptop, 16"(40 cm), & Windows 11');
+    expect(snap.brand).toBe("ASUS & Co");
+  });
+
   it("ignores malformed JSON-LD blocks instead of throwing", () => {
     const html = `<html><head><script type="application/ld+json">{not valid json</script></head></html>`;
     expect(() => extractPriceFromHtml(html)).not.toThrow();
