@@ -1,15 +1,4 @@
 {
-  "indexes": [
-    {
-      "collectionGroup": "products",
-      "queryScope": "COLLECTION",
-      "fields": [{ "fieldPath": "nextCheckAt", "order": "ASCENDING" }]
-    },
-    {
-      "collectionGroup": "history",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [{ "fieldPath": "ts", "order": "ASCENDING" }]
-    }
-  ],
+  "indexes": [],
   "fieldOverrides": []
 }
