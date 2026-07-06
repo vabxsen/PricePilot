@@ -1,11 +1,12 @@
 import type { ComponentType } from "react";
 import { NavLink } from "react-router-dom";
-import { IconGrid, IconHeart, IconSettings, IconTag } from "./ui/icons.js";
+import { IconChart, IconGrid, IconHeart, IconSettings, IconTag } from "./ui/icons.js";
 
 type IconType = ComponentType<{ size?: number; className?: string }>;
 
 const tabs: { to: string; label: string; icon: IconType }[] = [
   { to: "/dashboard", label: "Dashboard", icon: IconGrid },
+  { to: "/charts", label: "Charts", icon: IconChart },
   { to: "/products", label: "Products", icon: IconTag },
   { to: "/wishlist", label: "Wishlist", icon: IconHeart },
   { to: "/settings", label: "Settings", icon: IconSettings },

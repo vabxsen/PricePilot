@@ -153,3 +153,10 @@ export const IconTarget = (p: IconProps) => (
     <circle cx="12" cy="12" r="1.4" />
   </Svg>
 );
+
+export const IconChart = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3 3v18h18" />
+    <path d="M7 14l3.5-4 3.5 2.5L21 6" />
+  </Svg>
+);

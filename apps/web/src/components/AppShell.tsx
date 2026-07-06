@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import { signOutUser, useAuth } from "../lib/auth.js";
 import { BottomNav } from "./BottomNav.js";
 import {
+  IconChart,
   IconGrid,
   IconHeart,
   IconLogout,
@@ -15,6 +16,7 @@ type IconType = ComponentType<{ size?: number; className?: string }>;
 
 const navItems: { to: string; label: string; icon: IconType }[] = [
   { to: "/dashboard", label: "Dashboard", icon: IconGrid },
+  { to: "/charts", label: "Charts", icon: IconChart },
   { to: "/products", label: "Products", icon: IconTag },
   { to: "/wishlist", label: "Wishlist", icon: IconHeart },
   { to: "/settings", label: "Settings", icon: IconSettings },

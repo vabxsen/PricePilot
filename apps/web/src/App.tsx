@@ -4,6 +4,7 @@ import { AppShell } from "./components/AppShell.js";
 import { ProtectedRoute } from "./lib/ProtectedRoute.js";
 import { useAuth } from "./lib/auth.js";
 import { AddProduct } from "./pages/AddProduct.js";
+import { Charts } from "./pages/Charts.js";
 import { Dashboard } from "./pages/Dashboard.js";
 import { Login } from "./pages/Login.js";
 import { ProductDetail } from "./pages/ProductDetail.js";
@@ -48,6 +49,16 @@ export function App() {
           <ProtectedRoute>
             <AppShell>
               <Dashboard />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/charts"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <Charts />
             </AppShell>
           </ProtectedRoute>
         }
