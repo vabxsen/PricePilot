@@ -43,62 +43,18 @@ function dropPercent(item: TrackedItem): number | null {
 }
 
 /** Premium "track a product" CTA — shared between the empty state and the main dashboard. */
-function TrackButton({
-  onClick,
-  label,
-  fullWidth = false,
-}: {
-  onClick: () => void;
-  label: string;
-  fullWidth?: boolean;
-}) {
+function TrackButton({ onClick, label }: { onClick: () => void; label: string }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`group inline-flex items-center justify-center gap-2.5 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-bg transition duration-200 hover:bg-brand-hover active:scale-[0.99] ${
-        fullWidth ? "w-full" : "w-full sm:w-auto"
-      }`}
+      className="group inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-bg transition duration-200 hover:bg-brand-hover active:scale-[0.99] sm:w-auto"
     >
       <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-bg/15 transition-transform duration-200 group-hover:rotate-90">
         <IconPlus size={13} />
       </span>
       {label}
     </button>
-  );
-}
-
-/** Simplified summary row: image, title, current price, and a compact drop-percent badge. */
-function DropRow({ item }: { item: TrackedItem }) {
-  const { product } = item;
-  const pct = dropPercent(item);
-  if (!product || pct === null) return null;
-
-  return (
-    <Link
-      to={`/product/${product.id}`}
-      className="flex items-center gap-3 rounded-lg px-2.5 py-2.5 transition duration-200 hover:bg-surface-raised"
-    >
-      {product.imageUrl ? (
-        <img src={product.imageUrl} alt="" className="h-10 w-10 shrink-0 rounded-md object-cover" />
-      ) : (
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-surface-raised text-ink-faint">
-          <IconBox size={16} />
-        </div>
-      )}
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium text-ink">{product.title}</div>
-        <div className="mt-0.5 flex items-center gap-2">
-          <RetailerBadge retailer={product.retailer} url={product.url} />
-          <span className="tabular text-sm font-semibold text-ink">
-            {formatMoney(product.currentPrice!, product.currency)}
-          </span>
-        </div>
-      </div>
-      <span className="tabular shrink-0 rounded-full bg-brand/15 px-2 py-1 text-xs font-semibold text-brand">
-        −{pct}%
-      </span>
-    </Link>
   );
 }
 
@@ -272,25 +228,6 @@ function PriceInsights({ drops }: { drops: TrackedItem[] }) {
   );
 }
 
-/** Polished empty state for "Recent price drops" — no fake data, just a calmer illustration. */
-function NoDropsYet() {
-  return (
-    <div className="flex flex-col items-center gap-3 py-9 text-center">
-      <div className="relative grid h-16 w-16 place-items-center">
-        <div className="absolute inset-0 animate-pulse rounded-full bg-brand/10" />
-        <div className="absolute inset-[6px] rounded-full bg-brand/10" />
-        <IconTrendDown size={22} className="relative text-brand" />
-      </div>
-      <div>
-        <p className="text-sm font-medium text-ink">No price drops yet</p>
-        <p className="mx-auto mt-1 max-w-[240px] text-xs text-ink-faint">
-          We're watching every price around the clock — drops will show up here the moment one hits.
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export function Dashboard() {
   const { user } = useAuth();
   const { profile } = useUserProfile(user?.uid);
@@ -391,37 +328,33 @@ export function Dashboard() {
         <>
           <PriceInsights drops={drops} />
 
-          {/* Track a product + recent price drops, side by side */}
-          <div className="mt-5 grid grid-cols-1 gap-3 lg:grid-cols-2 lg:items-stretch">
-            <div className="flex flex-col justify-center rounded-xl border border-border/10 bg-surface p-5 lg:p-6">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-faint">
-                Track a product
-              </h2>
-              <p className="mt-1.5 text-sm text-ink-muted">
-                Paste any product link and we'll watch the price for you — and alert you the
-                moment it drops.
-              </p>
-              <div className="mt-4">
-                <TrackButton
-                  onClick={() => setShowTrackDialog(true)}
-                  label="Track a product"
-                  fullWidth
-                />
-              </div>
-            </div>
+          {/* Track a product + recent price drops — two equal halves on one row */}
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setShowTrackDialog(true)}
+              className="group flex flex-col items-center justify-center gap-2 rounded-xl bg-brand px-4 py-5 text-center text-sm font-semibold text-bg transition duration-200 hover:bg-brand-hover active:scale-[0.99]"
+            >
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-bg/15 transition-transform duration-200 group-hover:rotate-90">
+                <IconPlus size={18} />
+              </span>
+              Track a product
+            </button>
 
-            <div className="rounded-xl border border-border/10 bg-surface p-4">
-              <SectionHeader title="Recent price drops" to="/products" cta="All products" />
-              {drops.length === 0 ? (
-                <NoDropsYet />
-              ) : (
-                <div className="-mx-2">
-                  {drops.slice(0, 4).map((item) => (
-                    <DropRow key={item.tracker.id} item={item} />
-                  ))}
-                </div>
-              )}
-            </div>
+            <Link
+              to="/products"
+              className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-border/10 bg-surface px-4 py-5 text-center text-sm font-semibold text-ink transition duration-200 hover:border-brand/30 hover:bg-surface-raised"
+            >
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-brand/15 text-brand">
+                <IconTrendDown size={18} />
+              </span>
+              Recent price drops
+              <span className="text-xs font-normal text-ink-faint">
+                {drops.length > 0
+                  ? `${drops.length} ${drops.length === 1 ? "drop" : "drops"}`
+                  : "None yet"}
+              </span>
+            </Link>
           </div>
 
           <DealsToday drops={drops} />
