@@ -28,21 +28,21 @@ export function StatCard({
   tone?: StatTone;
 }) {
   return (
-    <div className="group rounded-xl border border-border/10 bg-surface p-3.5 transition duration-200 hover:border-border/20 hover:bg-surface-raised/60">
+    <div className="group rounded-lg border border-border/10 bg-surface p-3 transition duration-200 hover:border-border/20 hover:bg-surface-raised/60">
       <div className="flex items-center justify-between">
         <div
-          className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg transition-transform duration-200 group-hover:scale-105 ${toneClasses[tone]}`}
+          className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg transition-transform duration-200 group-hover:scale-105 ${toneClasses[tone]}`}
         >
           {icon}
         </div>
         {meta && (
-          <span className="tabular text-[11px] font-medium text-ink-faint">{meta}</span>
+          <span className="tabular text-[10px] font-medium text-ink-faint">{meta}</span>
         )}
       </div>
-      <div className="tabular mt-3 text-xl font-semibold leading-none tracking-tight text-ink">
+      <div className="tabular mt-2.5 text-lg font-semibold leading-none tracking-tight text-ink">
         {value}
       </div>
-      <div className="mt-1 truncate text-[11px] leading-none text-ink-faint">{label}</div>
+      <div className="mt-1 truncate text-[10px] leading-none text-ink-faint">{label}</div>
     </div>
   );
 }
