@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { Avatar } from "../components/ui/Avatar.js";
 import { Button } from "../components/ui/Button.js";
 import { Card } from "../components/ui/Card.js";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog.js";
@@ -197,9 +198,11 @@ export function Settings() {
 
       {/* Profile header */}
       <Card className="mt-6 flex items-center gap-4">
-        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-brand/15 text-2xl font-semibold text-brand">
-          {initial}
-        </div>
+        <Avatar
+          photoUrl={user?.photoURL}
+          fallbackText={initial}
+          className="h-16 w-16 rounded-full bg-brand/15 text-2xl font-semibold text-brand"
+        />
         <div className="min-w-0">
           <div className="truncate text-lg font-semibold text-ink">
             {displayName || username || "Your profile"}

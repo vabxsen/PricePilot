@@ -32,6 +32,11 @@ async function bootstrapUserDoc(user: User) {
       fcmTokens: [],
       notificationPrefs: { email: true, webPush: false },
     });
+  } else if (user.photoURL && snap.data()["photoUrl"] !== user.photoURL) {
+    // Keep the Firestore copy of the avatar in sync with the live Google
+    // photo on every sign-in. displayName/username/bio are user-editable in
+    // Settings and are deliberately left untouched here.
+    await setDoc(ref, { photoUrl: user.photoURL }, { merge: true });
   }
 }
 

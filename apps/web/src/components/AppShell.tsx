@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { signOutUser, useAuth } from "../lib/auth.js";
 import { BottomNav } from "./BottomNav.js";
+import { Avatar } from "./ui/Avatar.js";
 import { ConfirmDialog } from "./ui/ConfirmDialog.js";
 import {
   IconChart,
@@ -74,9 +75,11 @@ export function AppShell({ children }: { children: ReactNode }) {
             to="/settings"
             className="flex items-center gap-2 rounded-md px-2 py-2 transition hover:bg-surface-raised"
           >
-            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-surface-raised text-sm font-semibold text-ink">
-              {initial}
-            </div>
+            <Avatar
+              photoUrl={user?.photoURL}
+              fallbackText={initial}
+              className="h-8 w-8 rounded-full bg-surface-raised text-sm font-semibold text-ink"
+            />
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm text-ink">{user?.displayName ?? user?.email}</div>
               <div className="truncate text-xs text-ink-faint">View settings</div>
@@ -110,12 +113,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span className="grid h-7 w-7 place-items-center rounded-md bg-brand text-bg">✈</span>
             <span className="text-lg">PricePilot</span>
           </Link>
-          <Link
-            to="/settings"
-            aria-label="Settings"
-            className="grid h-8 w-8 place-items-center rounded-full bg-surface-raised text-sm font-semibold text-ink"
-          >
-            {initial}
+          <Link to="/settings" aria-label="Settings">
+            <Avatar
+              photoUrl={user?.photoURL}
+              fallbackText={initial}
+              className="h-8 w-8 rounded-full bg-surface-raised text-sm font-semibold text-ink"
+            />
           </Link>
         </header>
 
