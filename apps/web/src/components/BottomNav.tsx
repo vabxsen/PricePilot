@@ -32,13 +32,13 @@ export function BottomNav() {
             {({ isActive }: { isActive: boolean }) => (
               <>
                 <span
-                  className={`grid h-7 w-7 place-items-center rounded-full transition-all duration-300 ${
+                  className={`grid h-9 w-9 place-items-center rounded-full transition-all duration-300 ${
                     isActive
                       ? "scale-100 bg-brand/15 text-brand"
                       : "scale-90 text-ink-faint group-hover:text-ink-muted"
                   }`}
                 >
-                  <Icon size={18} />
+                  <Icon size={22} />
                 </span>
                 <span
                   className={`transition-colors duration-200 ${
