@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Button.js";
 import { Card } from "../components/ui/Card.js";
 import { Input } from "../components/ui/Input.js";
+import { IconHeart, IconPlus } from "../components/ui/icons.js";
 import { useAuth } from "../lib/auth.js";
 import { resolveProductUrl, type ResolvedProduct } from "../lib/resolver.js";
 import { addTrackerForProduct } from "../lib/trackers.js";
@@ -145,18 +146,26 @@ export function AddProduct() {
           <Button
             onClick={handleConfirm}
             disabled={status === "saving" || status === "wishlisting"}
-            className="mt-4 w-full"
+            className="mt-4 inline-flex w-full items-center justify-center gap-2"
           >
+            <IconPlus size={18} />
             {status === "saving" ? "Saving…" : "Track this product"}
           </Button>
+          <p className="mt-1 text-center text-xs text-ink-faint">
+            Watches the price and alerts you when it drops.
+          </p>
           <Button
             variant="secondary"
             onClick={handleSaveToWishlist}
             disabled={status === "saving" || status === "wishlisting"}
-            className="mt-2 w-full"
+            className="mt-3 inline-flex w-full items-center justify-center gap-2"
           >
-            {status === "wishlisting" ? "Saving…" : "Save to wishlist"}
+            <IconHeart size={16} />
+            {status === "wishlisting" ? "Saving…" : "Save to wishlist (don't track yet)"}
           </Button>
+          <p className="mt-1 text-center text-xs text-ink-faint">
+            Just saves it for later — no price checks, no alerts, until you track it.
+          </p>
         </Card>
       )}
     </section>
