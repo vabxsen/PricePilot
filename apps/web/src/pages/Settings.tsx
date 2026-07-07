@@ -3,12 +3,14 @@ import { Avatar } from "../components/ui/Avatar.js";
 import { Button } from "../components/ui/Button.js";
 import { Card } from "../components/ui/Card.js";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog.js";
+import { InfoDialog } from "../components/ui/InfoDialog.js";
 import { Input, Textarea } from "../components/ui/Input.js";
 import { Switch } from "../components/ui/Switch.js";
 import {
   IconBell,
   IconCheck,
   IconDownload,
+  IconHeart,
   IconLogout,
   IconUser,
 } from "../components/ui/icons.js";
@@ -89,6 +91,7 @@ export function Settings() {
   const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [error, setError] = useState<string | null>(null);
   const [confirmingSignOut, setConfirmingSignOut] = useState(false);
+  const [showCredits, setShowCredits] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [usernameCheck, setUsernameCheck] = useState<UsernameCheck>("idle");
   const checkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -415,7 +418,21 @@ export function Settings() {
         <div className="font-medium text-ink-muted">PricePilot</div>
         <div className="mt-1">Never overpay again · Built on Firebase + Cloudflare</div>
         <div className="mt-1">© {new Date().getFullYear()} PricePilot</div>
+        <button
+          type="button"
+          onClick={() => setShowCredits(true)}
+          aria-label="About this app"
+          className="mt-3 inline-flex items-center justify-center rounded-full p-2 text-ink-faint transition hover:text-danger"
+        >
+          <IconHeart size={18} />
+        </button>
       </div>
+
+      <InfoDialog open={showCredits} onClose={() => setShowCredits(false)}>
+        <div className="text-lg font-semibold text-ink">Made with ❤️ by Vaibhav Sen</div>
+        <div className="mt-2 text-sm text-ink-muted">cheeseburst06@gmail.com</div>
+        <div className="mt-1 text-sm text-ink-muted">Made in India</div>
+      </InfoDialog>
     </section>
   );
 }
