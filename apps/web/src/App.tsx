@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { AppLoader } from "./components/AppLoader.js";
 import { AppShell } from "./components/AppShell.js";
 import { ProtectedRoute } from "./lib/ProtectedRoute.js";
 import { useAuth } from "./lib/auth.js";
@@ -26,7 +27,7 @@ function PublicLayout({ children }: { children: ReactNode }) {
 function Index() {
   const { user, loading } = useAuth();
   if (loading) {
-    return <p className="py-20 text-center text-ink-faint">Loading…</p>;
+    return <AppLoader />;
   }
   return <Navigate to={user ? "/dashboard" : "/login"} replace />;
 }
