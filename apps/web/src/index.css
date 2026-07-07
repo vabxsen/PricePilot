@@ -44,16 +44,21 @@ body,
   height: 100%;
 }
 
+/*
+ * Safety net against horizontal overflow dragging mobile browsers into a
+ * zoomed-out desktop-style layout. `overflow-x: hidden` on <html> alone
+ * proved insufficient — content overflowing #root still inflated the
+ * document width — so we also clip at #root. `clip` (not `hidden`) is used
+ * on #root so it does NOT become a scroll container / force overflow-y to
+ * auto, which would break normal vertical page scrolling. Intentional
+ * horizontal scrollers scroll within their own box (narrower than the
+ * viewport) and are unaffected.
+ */
 html {
-  /*
-   * Safety net: if any component ever overflows its container (e.g. a grid
-   * item sized by a long unbreakable string instead of its track — the
-   * exact bug this once caused), this stops it from widening the whole
-   * document and dragging mobile browsers into a zoomed-out desktop-style
-   * layout. Intentional horizontal scrollers (e.g. the filter pill row) use
-   * their own `overflow-x-auto` and are unaffected.
-   */
   overflow-x: hidden;
+}
+#root {
+  overflow-x: clip;
 }
 
 body {

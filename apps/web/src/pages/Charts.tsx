@@ -197,8 +197,9 @@ export function Charts() {
       <h1 className="text-2xl font-bold text-ink">Charts</h1>
       <p className="mt-1 text-sm text-ink-muted">Price history for any product you track.</p>
 
-      {/* Product selector */}
-      <div className="no-scrollbar -mx-1 mt-5 flex gap-2 overflow-x-auto px-1 py-1">
+      {/* Product selector — wraps instead of horizontal-scrolling, so a long
+          list of products can never widen the page on mobile. */}
+      <div className="mt-5 flex flex-wrap gap-2">
         {items.map(({ product: p }) =>
           p ? (
             <button

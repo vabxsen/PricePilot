@@ -104,7 +104,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-6 sm:px-6 md:pb-10 md:pt-8 lg:px-8">
+        {/* max-w is capped at 100vw as well as 72rem: inside this column-flex
+            shell, a flex item's `min-width: auto` otherwise lets long content
+            (e.g. a product title) expand `main` past the viewport on mobile,
+            which reads as the whole UI "zooming out". The 100vw cap forces it
+            to stay within the screen so truncation/wrapping work as intended. */}
+        <main className="mx-auto w-full max-w-[min(72rem,100vw)] flex-1 px-4 pb-28 pt-6 sm:px-6 md:pb-10 md:pt-8 lg:px-8">
           {children}
         </main>
       </div>
