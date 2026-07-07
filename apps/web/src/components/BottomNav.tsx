@@ -27,18 +27,18 @@ export function BottomNav() {
           <NavLink
             key={to}
             to={to}
-            className="group relative flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium"
+            className="group relative flex flex-1 flex-col items-center gap-0.5 py-1.5 text-[10px] font-medium"
           >
             {({ isActive }: { isActive: boolean }) => (
               <>
                 <span
-                  className={`grid h-8 w-8 place-items-center rounded-full transition-all duration-300 ${
+                  className={`grid h-7 w-7 place-items-center rounded-full transition-all duration-300 ${
                     isActive
                       ? "scale-100 bg-brand/15 text-brand"
                       : "scale-90 text-ink-faint group-hover:text-ink-muted"
                   }`}
                 >
-                  <Icon size={20} />
+                  <Icon size={16} />
                 </span>
                 <span
                   className={`transition-colors duration-200 ${
@@ -48,7 +48,7 @@ export function BottomNav() {
                   {label}
                 </span>
                 <span
-                  className={`absolute bottom-0.5 h-1 w-1 rounded-full bg-brand transition-all duration-300 ${
+                  className={`absolute bottom-0 h-0.5 w-0.5 rounded-full bg-brand transition-all duration-300 ${
                     isActive ? "scale-100 opacity-100" : "scale-0 opacity-0"
                   }`}
                 />
