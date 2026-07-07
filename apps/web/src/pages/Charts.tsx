@@ -323,7 +323,7 @@ export function Charts() {
                 rel="noopener noreferrer"
                 className="group inline-flex items-start gap-1.5"
               >
-                <span className="line-clamp-2 font-semibold text-ink group-hover:text-brand">
+                <span className="font-semibold text-ink group-hover:text-brand">
                   {product.title}
                 </span>
                 <IconExternal size={13} className="mt-0.5 shrink-0 text-ink-faint" />
