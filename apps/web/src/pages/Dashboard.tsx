@@ -43,12 +43,22 @@ function dropPercent(item: TrackedItem): number | null {
 }
 
 /** Premium "track a product" CTA — shared between the empty state and the main dashboard. */
-function TrackButton({ onClick, label }: { onClick: () => void; label: string }) {
+function TrackButton({
+  onClick,
+  label,
+  fullWidth = false,
+}: {
+  onClick: () => void;
+  label: string;
+  fullWidth?: boolean;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-brand px-5 py-3.5 text-sm font-semibold text-bg shadow-glow transition duration-200 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 sm:w-auto"
+      className={`group inline-flex items-center justify-center gap-2.5 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-bg transition duration-200 hover:bg-brand-hover active:scale-[0.99] ${
+        fullWidth ? "w-full" : "w-full sm:w-auto"
+      }`}
     >
       <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-bg/15 transition-transform duration-200 group-hover:rotate-90">
         <IconPlus size={13} />
@@ -381,9 +391,37 @@ export function Dashboard() {
         <>
           <PriceInsights drops={drops} />
 
-          {/* Track a product */}
-          <div className="mt-5 flex">
-            <TrackButton onClick={() => setShowTrackDialog(true)} label="Track a product" />
+          {/* Track a product + recent price drops, side by side */}
+          <div className="mt-5 grid grid-cols-1 gap-3 lg:grid-cols-2 lg:items-stretch">
+            <div className="flex flex-col justify-center rounded-xl border border-border/10 bg-surface p-5 lg:p-6">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-faint">
+                Track a product
+              </h2>
+              <p className="mt-1.5 text-sm text-ink-muted">
+                Paste any product link and we'll watch the price for you — and alert you the
+                moment it drops.
+              </p>
+              <div className="mt-4">
+                <TrackButton
+                  onClick={() => setShowTrackDialog(true)}
+                  label="Track a product"
+                  fullWidth
+                />
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border/10 bg-surface p-4">
+              <SectionHeader title="Recent price drops" to="/products" cta="All products" />
+              {drops.length === 0 ? (
+                <NoDropsYet />
+              ) : (
+                <div className="-mx-2">
+                  {drops.slice(0, 4).map((item) => (
+                    <DropRow key={item.tracker.id} item={item} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <DealsToday drops={drops} />
@@ -399,20 +437,6 @@ export function Dashboard() {
               <div className="space-y-2">
                 {targets.slice(0, 5).map((item) => (
                   <TargetCard key={item.tracker.id} item={item} />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Recent price drops */}
-          <div className="mt-5 rounded-xl border border-border/10 bg-surface p-4">
-            <SectionHeader title="Recent price drops" to="/products" cta="All products" />
-            {drops.length === 0 ? (
-              <NoDropsYet />
-            ) : (
-              <div className="-mx-2">
-                {drops.slice(0, 5).map((item) => (
-                  <DropRow key={item.tracker.id} item={item} />
                 ))}
               </div>
             )}
