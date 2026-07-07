@@ -304,41 +304,44 @@ export function Charts() {
       {product && (
         <>
           {/* Header */}
-          <div className="mt-4 flex items-center gap-3.5 rounded-xl border border-border/10 bg-surface p-4">
-            {product.imageUrl ? (
-              <img
-                src={product.imageUrl}
-                alt=""
-                className="h-14 w-14 shrink-0 rounded-lg object-cover"
-              />
-            ) : (
-              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-surface-raised text-ink-faint">
-                <IconBox size={22} />
-              </div>
-            )}
-            <div className="min-w-0 flex-1">
-              <a
-                href={product.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-start gap-1.5"
-              >
-                <span className="font-semibold text-ink group-hover:text-brand">
-                  {product.title}
-                </span>
-                <IconExternal size={13} className="mt-0.5 shrink-0 text-ink-faint" />
-              </a>
-              <div className="mt-1">
-                <RetailerBadge retailer={product.retailer} url={product.url} />
+          <div className="mt-4 rounded-xl border border-border/10 bg-surface p-4">
+            <div className="flex items-start gap-3.5">
+              {product.imageUrl ? (
+                <img
+                  src={product.imageUrl}
+                  alt=""
+                  className="h-14 w-14 shrink-0 rounded-lg object-cover"
+                />
+              ) : (
+                <div className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-surface-raised text-ink-faint">
+                  <IconBox size={22} />
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <a
+                  href={product.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-start gap-1.5"
+                >
+                  <span className="font-semibold text-ink group-hover:text-brand">
+                    {product.title}
+                  </span>
+                  <IconExternal size={13} className="mt-1 shrink-0 text-ink-faint" />
+                </a>
+                <div className="mt-1.5">
+                  <RetailerBadge retailer={product.retailer} url={product.url} />
+                </div>
               </div>
             </div>
-            <div className="shrink-0 text-right">
-              <div className="tabular text-xl font-semibold text-ink sm:text-2xl">
+
+            <div className="mt-3.5 flex items-center gap-2.5 border-t border-border/10 pt-3.5">
+              <span className="tabular text-2xl font-semibold text-ink">
                 {currentPrice !== null ? formatMoney(currentPrice, currency) : "—"}
-              </div>
+              </span>
               {view.stats && (
-                <div
-                  className={`tabular mt-1 inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium ${
+                <span
+                  className={`tabular inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium ${
                     view.changePct === 0
                       ? "bg-surface-raised text-ink-muted"
                       : changeIsDrop
@@ -349,7 +352,7 @@ export function Charts() {
                   {view.changePct !== 0 && (changeIsDrop ? "▼" : "▲")}
                   {view.changePct > 0 ? "+" : ""}
                   {view.changePct.toFixed(1)}%
-                </div>
+                </span>
               )}
             </div>
           </div>
