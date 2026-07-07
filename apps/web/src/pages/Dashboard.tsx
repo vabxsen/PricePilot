@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { StatCard } from "../components/StatCard.js";
+import { TrackProductDialog } from "../components/TrackProductDialog.js";
 import { buttonClasses } from "../components/ui/Button.js";
 import {
   IconBell,
@@ -110,6 +112,7 @@ export function Dashboard() {
   const { user } = useAuth();
   const { profile } = useUserProfile(user?.uid);
   const { items, loading } = useTrackedProducts(user?.uid);
+  const [showTrackDialog, setShowTrackDialog] = useState(false);
 
   const name = (
     profile?.displayName ||
@@ -171,12 +174,13 @@ export function Dashboard() {
           <p className="mt-1 text-sm text-ink-muted">
             Add your first product and we'll watch the price for you.
           </p>
-          <Link
-            to="/add"
+          <button
+            type="button"
+            onClick={() => setShowTrackDialog(true)}
             className={`${buttonClasses("primary", "md")} mt-5 inline-flex items-center gap-2`}
           >
             <IconPlus size={18} /> Track your first product
-          </Link>
+          </button>
         </div>
       )}
 
@@ -184,12 +188,13 @@ export function Dashboard() {
         <>
           {/* Track a product — now where Recent price drops used to sit */}
           <div className="mt-10 flex">
-            <Link
-              to="/add"
+            <button
+              type="button"
+              onClick={() => setShowTrackDialog(true)}
               className={`${buttonClasses("primary", "md")} inline-flex w-full items-center justify-center gap-2 sm:w-auto`}
             >
               <IconPlus size={18} /> Track a product
-            </Link>
+            </button>
           </div>
 
           {/* Active price targets */}
@@ -225,6 +230,8 @@ export function Dashboard() {
           </div>
         </>
       )}
+
+      <TrackProductDialog open={showTrackDialog} onClose={() => setShowTrackDialog(false)} />
     </section>
   );
 }
