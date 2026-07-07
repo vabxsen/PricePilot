@@ -4,7 +4,7 @@ import { Button } from "../components/ui/Button.js";
 import { Card } from "../components/ui/Card.js";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog.js";
 import { InfoDialog } from "../components/ui/InfoDialog.js";
-import { Input, Textarea } from "../components/ui/Input.js";
+import { Input } from "../components/ui/Input.js";
 import { Switch } from "../components/ui/Switch.js";
 import {
   IconBell,
@@ -87,7 +87,6 @@ export function Settings() {
 
   const [displayName, setDisplayName] = useState("");
   const [username, setUsername] = useState("");
-  const [bio, setBio] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [error, setError] = useState<string | null>(null);
   const [confirmingSignOut, setConfirmingSignOut] = useState(false);
@@ -102,7 +101,6 @@ export function Settings() {
     if (profile) {
       setDisplayName(profile.displayName ?? "");
       setUsername(profile.username ?? "");
-      setBio(profile.bio ?? "");
     }
   }, [profile]);
 
@@ -134,7 +132,6 @@ export function Settings() {
     if (profile) {
       setDisplayName(profile.displayName ?? "");
       setUsername(profile.username ?? "");
-      setBio(profile.bio ?? "");
     }
     setError(null);
     setUsernameCheck("idle");
@@ -160,7 +157,6 @@ export function Settings() {
     try {
       await updateUserProfile(user.uid, {
         displayName: displayName.trim(),
-        bio: bio.trim(),
       });
       if (!hasPermanentUsername && trimmedUsername) {
         await claimUsername(user.uid, trimmedUsername);
@@ -236,7 +232,10 @@ export function Settings() {
           Profile information
         </SectionTitle>
         <form onSubmit={handleSave} className="space-y-4">
-          <Card className="space-y-4">
+          <Card
+            key={isEditing ? "editing" : "viewing"}
+            className={`space-y-4 ${isEditing ? "animate-fade-up" : ""}`}
+          >
             <Field label="Name">
               <Input
                 value={displayName}
@@ -283,18 +282,6 @@ export function Settings() {
                   )}
                 </>
               )}
-            </Field>
-
-            <Field label="Bio">
-              <Textarea
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="A short bio…"
-                maxLength={280}
-                rows={3}
-                disabled={!isEditing}
-              />
-              <div className="mt-1 text-right text-xs text-ink-faint">{bio.length}/280</div>
             </Field>
           </Card>
 

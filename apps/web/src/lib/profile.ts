@@ -35,11 +35,12 @@ export function useUserProfile(uid: string | undefined) {
  * actual empty string is what lets a user clear a field. Converting to
  * undefined here would silently no-op under ignoreUndefinedProperties.
  * Username is deliberately excluded here — it's a one-time, permanent claim
- * handled exclusively by claimUsername() below.
+ * handled exclusively by claimUsername() below. Bio isn't editable from the
+ * UI at all anymore.
  */
 export async function updateUserProfile(
   uid: string,
-  updates: Partial<Pick<UserDoc, "displayName" | "bio">>,
+  updates: Partial<Pick<UserDoc, "displayName">>,
 ): Promise<void> {
   await setDoc(doc(getDb(), "users", uid), updates, { merge: true });
 }
