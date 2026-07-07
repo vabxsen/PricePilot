@@ -7,6 +7,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { PriceHistoryChart } from "../components/PriceHistoryChart.js";
+import { RetailerBadge } from "../components/RetailerBadge.js";
 import { buttonClasses } from "../components/ui/Button.js";
 import { SegmentedControl, type Segment } from "../components/ui/SegmentedControl.js";
 import { IconBox, IconChart, IconExternal, IconPlus, IconTrendDown } from "../components/ui/icons.js";
@@ -113,9 +114,9 @@ function Stat({
   valueClass?: string;
 }) {
   return (
-    <div className="rounded-lg border border-border/10 bg-surface p-3">
+    <div className="px-3 py-3 text-center">
       <div className="text-[11px] uppercase tracking-wide text-ink-faint">{label}</div>
-      <div className={`tabular mt-1 text-lg font-semibold ${valueClass}`}>{value}</div>
+      <div className={`tabular mt-1 text-base font-semibold ${valueClass}`}>{value}</div>
     </div>
   );
 }
@@ -158,7 +159,7 @@ export function Charts() {
     return (
       <section className="animate-fade-up">
         <h1 className="text-2xl font-bold text-ink">Charts</h1>
-        <div className="mt-6 h-72 animate-pulse rounded-lg border border-border/10 bg-surface" />
+        <div className="mt-6 h-72 animate-pulse rounded-xl border border-border/10 bg-surface" />
       </section>
     );
   }
@@ -167,7 +168,7 @@ export function Charts() {
     return (
       <section className="animate-fade-up">
         <h1 className="text-2xl font-bold text-ink">Charts</h1>
-        <div className="mt-6 rounded-lg border border-dashed border-border/15 bg-surface/40 p-10 text-center">
+        <div className="mt-6 rounded-xl border border-dashed border-border/15 bg-surface/40 p-10 text-center">
           <div className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-brand/15 text-brand">
             <IconChart size={20} />
           </div>
@@ -228,16 +229,16 @@ export function Charts() {
       {product && (
         <>
           {/* Header */}
-          <div className="mt-4 flex gap-4 rounded-lg border border-border/10 bg-surface p-4">
+          <div className="mt-4 flex items-center gap-3.5 rounded-xl border border-border/10 bg-surface p-4">
             {product.imageUrl ? (
               <img
                 src={product.imageUrl}
                 alt=""
-                className="h-20 w-20 shrink-0 rounded-lg object-cover"
+                className="h-14 w-14 shrink-0 rounded-lg object-cover"
               />
             ) : (
-              <div className="grid h-20 w-20 shrink-0 place-items-center rounded-lg bg-surface-raised text-ink-faint">
-                <IconBox size={24} />
+              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-surface-raised text-ink-faint">
+                <IconBox size={22} />
               </div>
             )}
             <div className="min-w-0 flex-1">
@@ -247,22 +248,34 @@ export function Charts() {
                 rel="noopener noreferrer"
                 className="group inline-flex items-start gap-1.5"
               >
-                <span className="line-clamp-2 font-semibold text-ink group-hover:text-brand">
+                <span className="line-clamp-1 font-semibold text-ink group-hover:text-brand">
                   {product.title}
                 </span>
-                <IconExternal size={14} className="mt-1 shrink-0 text-ink-faint" />
+                <IconExternal size={13} className="mt-0.5 shrink-0 text-ink-faint" />
               </a>
-              <div className="mt-0.5 text-xs text-ink-faint">{product.retailer}</div>
-              <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <span className="tabular text-2xl font-semibold text-ink">
-                  {currentPrice !== null ? formatMoney(currentPrice, currency) : "—"}
-                </span>
-                {tracker?.targetPrice != null && (
-                  <span className="tabular text-sm text-ink-muted">
-                    Target <span className="text-brand">{formatMoney(tracker.targetPrice, currency)}</span>
-                  </span>
-                )}
+              <div className="mt-1">
+                <RetailerBadge retailer={product.retailer} url={product.url} />
               </div>
+            </div>
+            <div className="shrink-0 text-right">
+              <div className="tabular text-xl font-semibold text-ink sm:text-2xl">
+                {currentPrice !== null ? formatMoney(currentPrice, currency) : "—"}
+              </div>
+              {view.stats && (
+                <div
+                  className={`tabular mt-1 inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium ${
+                    view.changePct === 0
+                      ? "bg-surface-raised text-ink-muted"
+                      : changeIsDrop
+                        ? "bg-brand/15 text-brand"
+                        : "bg-surface-raised text-ink-muted"
+                  }`}
+                >
+                  {view.changePct !== 0 && (changeIsDrop ? "▼" : "▲")}
+                  {view.changePct > 0 ? "+" : ""}
+                  {view.changePct.toFixed(1)}%
+                </div>
+              )}
             </div>
           </div>
 
@@ -280,35 +293,31 @@ export function Charts() {
             />
           </div>
 
-          {/* Stats */}
-          <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
+          {/* Stats — grouped into one clean card */}
+          <div className="mt-4 grid grid-cols-3 divide-x divide-border/10 rounded-xl border border-border/10 bg-surface">
             <Stat
               label="Lowest"
               value={view.stats ? formatMoney(view.stats.min, currency) : "—"}
               valueClass="text-brand"
             />
-            <Stat label="Highest" value={view.stats ? formatMoney(view.stats.max, currency) : "—"} />
-            <Stat
-              label="Current"
-              value={currentPrice !== null ? formatMoney(currentPrice, currency) : "—"}
-            />
             <Stat label="Average" value={view.stats ? formatMoney(view.stats.avg, currency) : "—"} />
-            <Stat
-              label="Change"
-              value={`${view.changePct > 0 ? "+" : ""}${view.changePct.toFixed(1)}%`}
-              valueClass={
-                view.changePct === 0 ? "text-ink-muted" : changeIsDrop ? "text-brand" : "text-ink-muted"
-              }
-            />
+            <Stat label="Highest" value={view.stats ? formatMoney(view.stats.max, currency) : "—"} />
           </div>
+
+          {tracker?.targetPrice != null && (
+            <p className="tabular mt-3 text-center text-xs text-ink-muted">
+              Target price{" "}
+              <span className="text-brand">{formatMoney(tracker.targetPrice, currency)}</span>
+            </p>
+          )}
 
           {/* Price drop timeline */}
           <div className="mt-8">
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-faint">
-              Price drop events
+              Price drops
             </h2>
             {view.events.length === 0 ? (
-              <p className="rounded-lg border border-border/10 bg-surface px-4 py-6 text-center text-sm text-ink-faint">
+              <p className="rounded-xl border border-border/10 bg-surface px-4 py-6 text-center text-sm text-ink-faint">
                 No price drops recorded in this range yet.
               </p>
             ) : (
@@ -316,7 +325,7 @@ export function Charts() {
                 {view.events.slice(0, 20).map((e) => (
                   <li
                     key={e.ts}
-                    className="flex items-center gap-3 rounded-lg border border-border/10 bg-surface px-3 py-2.5"
+                    className="flex items-center gap-3 rounded-xl border border-border/10 bg-surface px-3 py-2.5"
                   >
                     <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand/15 text-brand">
                       <IconTrendDown size={16} />
