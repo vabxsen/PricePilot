@@ -36,13 +36,13 @@ export function StatCard({
           {icon}
         </div>
         {meta && (
-          <span className="tabular text-[10px] font-medium text-ink-faint">{meta}</span>
+          <span className="tabular text-[11px] font-medium text-ink-faint">{meta}</span>
         )}
       </div>
-      <div className="tabular mt-2.5 text-lg font-semibold leading-none tracking-tight text-ink">
+      <div className="tabular mt-2.5 text-xl font-semibold leading-none tracking-tight text-ink">
         {value}
       </div>
-      <div className="mt-1 truncate text-[10px] leading-none text-ink-faint">{label}</div>
+      <div className="mt-1 truncate text-xs leading-none text-ink-faint">{label}</div>
     </div>
   );
 }
