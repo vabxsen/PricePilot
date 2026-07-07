@@ -108,7 +108,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Mobile top bar */}
         <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border/10 bg-bg/80 px-4 py-3 backdrop-blur md:hidden">
           <Link to="/" className="flex items-center gap-2 font-semibold text-ink">
-            <img src="/logo.png" alt="" className="h-9 w-9 rounded-md object-cover" />
+            <img src="/logo.png" alt="" className="h-11 w-11 rounded-md object-cover" />
             <span className="text-lg">PricePilot</span>
           </Link>
           <Link to="/settings" aria-label="Settings">
