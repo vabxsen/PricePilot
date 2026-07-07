@@ -248,8 +248,8 @@ export function Settings() {
 
             <Field label="Username">
               {hasPermanentUsername ? (
-                <div className="rounded-md border border-border/15 bg-surface px-4 py-3 opacity-50">
-                  <span className="tabular text-ink-faint">@{profile!.username}</span>
+                <div className="rounded-md border border-border/15 bg-surface px-4 py-3">
+                  <span className="tabular text-ink-muted">@{profile!.username}</span>
                 </div>
               ) : (
                 <>
