@@ -173,7 +173,7 @@ function ProductPicker({
   const selected = products.find((p) => p.id === selectedId) ?? null;
 
   return (
-    <div ref={ref} className="relative mt-5">
+    <div ref={ref} className="relative mt-5 max-w-xs">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
