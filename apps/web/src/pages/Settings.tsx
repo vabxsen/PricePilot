@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "../components/ui/Button.js";
 import { Card } from "../components/ui/Card.js";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog.js";
 import { Input, Textarea } from "../components/ui/Input.js";
 import { Switch } from "../components/ui/Switch.js";
 import {
@@ -66,6 +67,7 @@ export function Settings() {
   const [bio, setBio] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [confirmingSignOut, setConfirmingSignOut] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -246,7 +248,7 @@ export function Settings() {
           <div className="border-t border-border/10 pt-3">
             <Button
               variant="secondary"
-              onClick={() => signOutUser()}
+              onClick={() => setConfirmingSignOut(true)}
               className="inline-flex items-center gap-2 text-danger"
             >
               <IconLogout size={16} /> Log out
@@ -254,6 +256,18 @@ export function Settings() {
           </div>
         </Card>
       </div>
+
+      <ConfirmDialog
+        open={confirmingSignOut}
+        title="Log out?"
+        description="You'll need to sign in again to see your tracked products."
+        confirmLabel="Log out"
+        onConfirm={() => {
+          setConfirmingSignOut(false);
+          signOutUser();
+        }}
+        onCancel={() => setConfirmingSignOut(false)}
+      />
 
       {/* Credits */}
       <div className="mt-8 pb-4 text-center text-xs text-ink-faint">

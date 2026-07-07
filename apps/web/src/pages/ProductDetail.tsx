@@ -1,6 +1,8 @@
 import { computeStats } from "@pricepilot/shared";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card } from "../components/ui/Card.js";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog.js";
 import { PriceChart } from "../components/PriceChart.js";
 import { StatTile } from "../components/StatTile.js";
 import { buttonClasses } from "../components/ui/Button.js";
@@ -21,6 +23,8 @@ export function ProductDetail() {
   const { product, loading } = useProduct(productId);
   const { history } = useProductHistory(productId);
   const { trackers } = useTrackerList(user?.uid);
+  const [confirmingUntrack, setConfirmingUntrack] = useState(false);
+  const [untracking, setUntracking] = useState(false);
 
   const tracker = trackers.find((t) => t.productId === productId);
   const stats = computeStats(history);
@@ -32,6 +36,7 @@ export function ProductDetail() {
 
   async function handleUntrack() {
     if (!user || !tracker || !product) return;
+    setUntracking(true);
     await removeTracker(user.uid, tracker.id, product.id);
     navigate("/dashboard");
   }
@@ -90,7 +95,7 @@ export function ProductDetail() {
           </a>
           {tracker && (
             <button
-              onClick={handleUntrack}
+              onClick={() => setConfirmingUntrack(true)}
               className="text-sm text-ink-faint transition hover:text-danger"
             >
               Stop tracking
@@ -98,6 +103,16 @@ export function ProductDetail() {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmingUntrack}
+        title="Stop tracking this product?"
+        description={`You'll stop tracking "${product.title}". Its price history stays intact for other trackers.`}
+        confirmLabel="Stop tracking"
+        busy={untracking}
+        onConfirm={handleUntrack}
+        onCancel={() => setConfirmingUntrack(false)}
+      />
 
       {tracker && (
         <Card className="mt-6 flex items-center justify-between">

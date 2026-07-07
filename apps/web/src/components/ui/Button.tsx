@@ -1,12 +1,13 @@
 import type { ButtonHTMLAttributes } from "react";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost";
+export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-brand text-bg shadow-glow hover:bg-brand-hover",
   secondary: "border border-border/15 bg-surface text-ink hover:bg-surface-raised",
   ghost: "text-ink-muted hover:text-ink",
+  danger: "bg-danger text-bg hover:bg-danger/90",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

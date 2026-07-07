@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { WishlistCard } from "../components/WishlistCard.js";
 import { buttonClasses } from "../components/ui/Button.js";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog.js";
 import { IconHeart, IconPlus } from "../components/ui/icons.js";
 import { useAuth } from "../lib/auth.js";
 import { moveWishlistItemToTracked, removeFromWishlist, useWishlist } from "../lib/wishlist.js";
@@ -13,6 +14,8 @@ export function Wishlist() {
   const { items, loading } = useWishlist(user?.uid);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<WishlistItem | null>(null);
+  const [removing, setRemoving] = useState(false);
 
   async function handleTrack(item: WishlistItem) {
     if (!user) return;
@@ -27,9 +30,12 @@ export function Wishlist() {
     }
   }
 
-  async function handleRemove(item: WishlistItem) {
-    if (!user) return;
-    await removeFromWishlist(user.uid, item.id);
+  async function confirmRemove() {
+    if (!user || !removeTarget) return;
+    setRemoving(true);
+    await removeFromWishlist(user.uid, removeTarget.id);
+    setRemoving(false);
+    setRemoveTarget(null);
   }
 
   return (
@@ -81,11 +87,21 @@ export function Wishlist() {
               item={item}
               tracking={busyId === item.id}
               onTrack={() => handleTrack(item)}
-              onRemove={() => handleRemove(item)}
+              onRemove={() => setRemoveTarget(item)}
             />
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!removeTarget}
+        title="Remove from wishlist?"
+        description={removeTarget ? `"${removeTarget.title}" will be removed from your wishlist.` : undefined}
+        confirmLabel="Remove"
+        busy={removing}
+        onConfirm={confirmRemove}
+        onCancel={() => setRemoveTarget(null)}
+      />
     </section>
   );
 }

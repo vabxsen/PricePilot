@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ProductListItem } from "../components/ProductListItem.js";
 import { buttonClasses } from "../components/ui/Button.js";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog.js";
 import { Input } from "../components/ui/Input.js";
 import { SegmentedControl, type Segment } from "../components/ui/SegmentedControl.js";
 import { IconPlus, IconSearch, IconTag } from "../components/ui/icons.js";
@@ -44,6 +45,8 @@ export function Products() {
   const { items, loading } = useTrackedProducts(user?.uid);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [removeTarget, setRemoveTarget] = useState<TrackedItem | null>(null);
+  const [removing, setRemoving] = useState(false);
 
   const counts = useMemo(
     () => ({
@@ -82,11 +85,12 @@ export function Products() {
     await setTrackerAlertsEnabled(user.uid, item.tracker.id, value);
   }
 
-  async function handleRemove(item: TrackedItem) {
-    if (!user) return;
-    const title = item.product?.title ?? "this product";
-    if (!window.confirm(`Stop tracking ${title}?`)) return;
-    await removeTracker(user.uid, item.tracker.id, item.tracker.productId);
+  async function confirmRemove() {
+    if (!user || !removeTarget) return;
+    setRemoving(true);
+    await removeTracker(user.uid, removeTarget.tracker.id, removeTarget.tracker.productId);
+    setRemoving(false);
+    setRemoveTarget(null);
   }
 
   return (
@@ -158,11 +162,25 @@ export function Products() {
               tracker={item.tracker}
               product={item.product}
               onToggleAlerts={(value) => handleToggle(item, value)}
-              onRemove={() => handleRemove(item)}
+              onRemove={() => setRemoveTarget(item)}
             />
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!removeTarget}
+        title="Stop tracking this product?"
+        description={
+          removeTarget?.product?.title
+            ? `You'll stop tracking "${removeTarget.product.title}".`
+            : undefined
+        }
+        confirmLabel="Stop tracking"
+        busy={removing}
+        onConfirm={confirmRemove}
+        onCancel={() => setRemoveTarget(null)}
+      />
     </section>
   );
 }

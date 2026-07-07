@@ -1,7 +1,9 @@
 import type { ComponentType, ReactNode } from "react";
+import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { signOutUser, useAuth } from "../lib/auth.js";
 import { BottomNav } from "./BottomNav.js";
+import { ConfirmDialog } from "./ui/ConfirmDialog.js";
 import {
   IconChart,
   IconGrid,
@@ -32,6 +34,7 @@ function sidebarLinkClass(isActive: boolean) {
 export function AppShell({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const initial = (user?.displayName ?? user?.email ?? "?").charAt(0).toUpperCase();
+  const [confirmingSignOut, setConfirmingSignOut] = useState(false);
 
   return (
     <div className="flex min-h-full">
@@ -80,13 +83,25 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </Link>
           <button
-            onClick={() => signOutUser()}
+            onClick={() => setConfirmingSignOut(true)}
             className="mt-1 flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-ink-faint transition hover:bg-surface-raised hover:text-ink"
           >
             <IconLogout size={16} /> Sign out
           </button>
         </div>
       </aside>
+
+      <ConfirmDialog
+        open={confirmingSignOut}
+        title="Sign out?"
+        description="You'll need to sign in again to see your tracked products."
+        confirmLabel="Sign out"
+        onConfirm={() => {
+          setConfirmingSignOut(false);
+          signOutUser();
+        }}
+        onCancel={() => setConfirmingSignOut(false)}
+      />
 
       <div className="flex flex-1 flex-col">
         {/* Mobile top bar */}
