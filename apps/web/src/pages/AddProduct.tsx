@@ -155,13 +155,13 @@ export function AddProduct() {
             Watches the price and alerts you when it drops.
           </p>
           <Button
-            variant="secondary"
+            variant="danger"
             onClick={handleSaveToWishlist}
             disabled={status === "saving" || status === "wishlisting"}
             className="mt-3 inline-flex w-full items-center justify-center gap-2"
           >
             <IconHeart size={16} />
-            {status === "wishlisting" ? "Saving…" : "Save to wishlist (don't track yet)"}
+            {status === "wishlisting" ? "Saving…" : "Save to wishlist"}
           </Button>
           <p className="mt-1 text-center text-xs text-ink-faint">
             Just saves it for later — no price checks, no alerts, until you track it.
