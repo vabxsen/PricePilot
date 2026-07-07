@@ -210,8 +210,10 @@ export async function addTrackerForProduct(
         allTimeHigh: resolved.price ?? undefined,
         trackerCount: 1,
         lastCheckedAt: now,
-        nextCheckAt: now + 3_600_000,
-        checkInterval: 86_400,
+        // Check due immediately (first real point on the next scrape run),
+        // then hourly — keeps the price chart a continuous trace.
+        nextCheckAt: now,
+        checkInterval: 3_600,
         createdAt: now,
       };
       t.set(productRef, newProduct);

@@ -23,6 +23,14 @@ jobs:
       - run: npm ci
       - name: Run scraper
         env:
+          # Prefer the base64-encoded secret (one clean line — far less
+          # error-prone to paste than multi-line JSON). Falls back to a raw
+          # JSON secret if that's what's configured.
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_SERVICE_ACCOUNT_B64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_B64 }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-        run: npm run scrape
+        run: |
+          if [ -n "$FIREBASE_SERVICE_ACCOUNT_B64" ]; then
+            export FIREBASE_SERVICE_ACCOUNT="$(printf '%s' "$FIREBASE_SERVICE_ACCOUNT_B64" | base64 -d)"
+          fi
+          npm run scrape
