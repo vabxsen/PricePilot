@@ -42,9 +42,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Desktop sidebar */}
       <aside className="flex w-60 shrink-0 flex-col border-r border-border/10 bg-surface/40 max-md:hidden">
         <Link to="/" className="flex items-center gap-2 px-5 py-5 font-semibold text-ink">
-          <span className="grid h-7 w-7 place-items-center rounded-md bg-brand text-bg shadow-glow">
-            ✈
-          </span>
+          <img src="/logo.png" alt="" className="h-7 w-7 rounded-md object-cover shadow-glow" />
           <span className="text-lg tracking-tight">PricePilot</span>
         </Link>
 
@@ -110,7 +108,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Mobile top bar */}
         <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border/10 bg-bg/80 px-4 py-3 backdrop-blur md:hidden">
           <Link to="/" className="flex items-center gap-2 font-semibold text-ink">
-            <span className="grid h-7 w-7 place-items-center rounded-md bg-brand text-bg">✈</span>
+            <img src="/logo.png" alt="" className="h-7 w-7 rounded-md object-cover" />
             <span className="text-lg">PricePilot</span>
           </Link>
           <Link to="/settings" aria-label="Settings">
