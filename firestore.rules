@@ -15,7 +15,18 @@ service cloud.firestore {
     }
 
     match /users/{uid} {
-      allow read, write: if isOwner(uid);
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid);
+
+      // `username` may be set exactly once and never changed again after
+      // that. usernames/{name} below is the actual global-uniqueness
+      // guarantee; this just enforces "once set, forever set" server-side
+      // (not just in the client UI) so a direct API call can't bypass it.
+      allow update: if isOwner(uid) && (
+        resource.data.get('username', '') == '' ||
+        request.resource.data.username == resource.data.username
+      );
+      allow delete: if false;
 
       match /trackers/{trackerId} {
         allow read, write: if isOwner(uid);
@@ -29,6 +40,22 @@ service cloud.firestore {
         allow read, update, delete: if isOwner(uid);
         allow create: if false;
       }
+    }
+
+    // usernames/{lowercasedUsername} — one doc per claimed username, doc ID
+    // is the lowercase-normalized name. Reserving a doc here is what
+    // actually guarantees global uniqueness (Firestore document creation is
+    // atomic): whoever's `create` lands first wins, and since the doc then
+    // exists, every subsequent attempt at the same ID is evaluated as an
+    // `update`, which is denied below — so a claim can never be reassigned
+    // or released.
+    match /usernames/{username} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'createdAt'])
+        && username.matches('^[a-z0-9_]{3,20}$');
+      allow update, delete: if false;
     }
 
     match /products/{productId} {

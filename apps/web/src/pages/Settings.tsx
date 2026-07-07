@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "../components/ui/Button.js";
 import { Card } from "../components/ui/Card.js";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog.js";
@@ -13,13 +13,31 @@ import {
 } from "../components/ui/icons.js";
 import { signOutUser, useAuth } from "../lib/auth.js";
 import { usePwaInstall } from "../lib/pwa.js";
-import { updateNotificationPrefs, updateUserProfile, useUserProfile } from "../lib/profile.js";
+import {
+  claimUsername,
+  isUsernameAvailable,
+  isValidUsernameFormat,
+  updateNotificationPrefs,
+  updateUserProfile,
+  useUserProfile,
+} from "../lib/profile.js";
 
-function SectionTitle({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+function SectionTitle({
+  icon,
+  children,
+  action,
+}: {
+  icon: ReactNode;
+  children: ReactNode;
+  action?: ReactNode;
+}) {
   return (
-    <div className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-faint">
-      <span className="text-ink-muted">{icon}</span>
-      {children}
+    <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-faint">
+        <span className="text-ink-muted">{icon}</span>
+        {children}
+      </div>
+      {action}
     </div>
   );
 }
@@ -57,6 +75,8 @@ function ToggleRow({
   );
 }
 
+type UsernameCheck = "idle" | "checking" | "available" | "taken";
+
 export function Settings() {
   const { user } = useAuth();
   const { profile, loading } = useUserProfile(user?.uid);
@@ -68,6 +88,11 @@ export function Settings() {
   const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [error, setError] = useState<string | null>(null);
   const [confirmingSignOut, setConfirmingSignOut] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [usernameCheck, setUsernameCheck] = useState<UsernameCheck>("idle");
+  const checkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const hasPermanentUsername = !!profile?.username && profile.username.trim() !== "";
 
   useEffect(() => {
     if (profile) {
@@ -77,18 +102,67 @@ export function Settings() {
     }
   }, [profile]);
 
+  // Live (debounced) availability check — only meaningful while editing and
+  // only before this account has ever permanently set a username.
+  useEffect(() => {
+    if (checkTimer.current) clearTimeout(checkTimer.current);
+    if (!isEditing || hasPermanentUsername) {
+      setUsernameCheck("idle");
+      return;
+    }
+    const value = username.trim();
+    if (!value || !isValidUsernameFormat(value)) {
+      setUsernameCheck("idle");
+      return;
+    }
+    setUsernameCheck("checking");
+    checkTimer.current = setTimeout(() => {
+      isUsernameAvailable(value)
+        .then((available) => setUsernameCheck(available ? "available" : "taken"))
+        .catch(() => setUsernameCheck("idle"));
+    }, 500);
+    return () => {
+      if (checkTimer.current) clearTimeout(checkTimer.current);
+    };
+  }, [username, isEditing, hasPermanentUsername]);
+
+  function handleCancel() {
+    if (profile) {
+      setDisplayName(profile.displayName ?? "");
+      setUsername(profile.username ?? "");
+      setBio(profile.bio ?? "");
+    }
+    setError(null);
+    setUsernameCheck("idle");
+    setIsEditing(false);
+  }
+
   async function handleSave(e: FormEvent) {
     e.preventDefault();
     if (!user) return;
+    const trimmedUsername = username.trim();
+
+    if (!hasPermanentUsername && trimmedUsername && !isValidUsernameFormat(trimmedUsername)) {
+      setError("Usernames must be 3-20 characters: lowercase letters, numbers, and underscores.");
+      return;
+    }
+    if (!hasPermanentUsername && trimmedUsername && usernameCheck === "taken") {
+      setError("Username is already taken.");
+      return;
+    }
+
     setStatus("saving");
     setError(null);
     try {
       await updateUserProfile(user.uid, {
         displayName: displayName.trim(),
-        username: username.trim(),
         bio: bio.trim(),
       });
+      if (!hasPermanentUsername && trimmedUsername) {
+        await claimUsername(user.uid, trimmedUsername);
+      }
       setStatus("saved");
+      setIsEditing(false);
       setTimeout(() => setStatus("idle"), 2000);
     } catch (err) {
       setError((err as Error).message);
@@ -139,7 +213,22 @@ export function Settings() {
 
       {/* Editable profile info */}
       <div className="mt-8">
-        <SectionTitle icon={<IconUser size={16} />}>Profile information</SectionTitle>
+        <SectionTitle
+          icon={<IconUser size={16} />}
+          action={
+            !isEditing && (
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                className="text-sm font-medium text-brand transition hover:opacity-80"
+              >
+                Edit profile
+              </button>
+            )
+          }
+        >
+          Profile information
+        </SectionTitle>
         <form onSubmit={handleSave} className="space-y-4">
           <Card className="space-y-4">
             <Field label="Name">
@@ -148,16 +237,48 @@ export function Settings() {
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Your name"
                 maxLength={80}
+                disabled={!isEditing}
               />
             </Field>
+
             <Field label="Username">
-              <Input
-                value={username}
-                onChange={(e) => setUsername(e.target.value.replace(/\s+/g, ""))}
-                placeholder="username"
-                maxLength={30}
-              />
+              {hasPermanentUsername ? (
+                <div className="flex items-center justify-between gap-2 rounded-md border border-border/15 bg-surface px-4 py-3">
+                  <span className="tabular text-ink">@{profile!.username}</span>
+                  <span className="shrink-0 text-xs text-ink-faint">Can't be changed</span>
+                </div>
+              ) : (
+                <>
+                  <Input
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value.replace(/\s+/g, "").toLowerCase())}
+                    placeholder="username"
+                    maxLength={20}
+                    disabled={!isEditing}
+                  />
+                  {isEditing && (
+                    <div className="mt-1.5 text-xs">
+                      {!username.trim() ? (
+                        <span className="text-ink-faint">
+                          Optional — but once set, it's permanent and can't be changed later.
+                        </span>
+                      ) : usernameCheck === "checking" ? (
+                        <span className="text-ink-faint">Checking availability…</span>
+                      ) : usernameCheck === "available" ? (
+                        <span className="text-brand">Username is available</span>
+                      ) : usernameCheck === "taken" ? (
+                        <span className="text-danger">Username is already taken</span>
+                      ) : !isValidUsernameFormat(username) ? (
+                        <span className="text-ink-faint">
+                          3-20 characters: lowercase letters, numbers, underscores.
+                        </span>
+                      ) : null}
+                    </div>
+                  )}
+                </>
+              )}
             </Field>
+
             <Field label="Bio">
               <Textarea
                 value={bio}
@@ -165,6 +286,7 @@ export function Settings() {
                 placeholder="A short bio…"
                 maxLength={280}
                 rows={3}
+                disabled={!isEditing}
               />
               <div className="mt-1 text-right text-xs text-ink-faint">{bio.length}/280</div>
             </Field>
@@ -172,10 +294,26 @@ export function Settings() {
 
           {error && <p className="text-sm text-danger">{error}</p>}
 
-          <Button type="submit" disabled={status === "saving"} className="inline-flex items-center gap-2">
-            {status === "saved" && <IconCheck size={16} />}
-            {status === "saving" ? "Saving…" : status === "saved" ? "Saved" : "Save changes"}
-          </Button>
+          {isEditing && (
+            <div className="flex items-center gap-2">
+              <Button
+                type="submit"
+                disabled={status === "saving" || usernameCheck === "taken"}
+                className="inline-flex items-center gap-2"
+              >
+                {status === "saved" && <IconCheck size={16} />}
+                {status === "saving" ? "Saving…" : status === "saved" ? "Saved" : "Save changes"}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleCancel}
+                disabled={status === "saving"}
+              >
+                Cancel
+              </Button>
+            </div>
+          )}
         </form>
       </div>
 
