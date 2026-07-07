@@ -198,8 +198,8 @@ export function Charts() {
       <h1 className="text-2xl font-bold text-ink">Charts</h1>
       <p className="mt-1 text-sm text-ink-muted">Price history for any product you track.</p>
 
-      {/* Product selector — wraps instead of horizontal-scrolling, so a long
-          list of products can never widen the page on mobile. */}
+      {/* Product selector — simple text pills; wraps so a long list never
+          widens the page on mobile. */}
       <div className="mt-5 flex flex-wrap gap-2">
         {items.map(({ product: p }) =>
           p ? (
@@ -207,20 +207,13 @@ export function Charts() {
               key={p.id}
               type="button"
               onClick={() => setSelectedId(p.id)}
-              className={`flex shrink-0 items-center gap-2 rounded-full border py-1 pl-1 pr-3 text-sm transition ${
+              className={`max-w-[12rem] truncate rounded-full border px-3.5 py-1.5 text-sm transition ${
                 p.id === selectedId
-                  ? "border-brand/40 bg-brand/10 text-brand"
+                  ? "border-brand/40 bg-brand/10 font-medium text-brand"
                   : "border-border/15 bg-surface text-ink-muted hover:bg-surface-raised hover:text-ink"
               }`}
             >
-              {p.imageUrl ? (
-                <img src={p.imageUrl} alt="" className="h-6 w-6 rounded-full object-cover" />
-              ) : (
-                <span className="grid h-6 w-6 place-items-center rounded-full bg-surface-raised text-ink-faint">
-                  <IconBox size={13} />
-                </span>
-              )}
-              <span className="max-w-[10rem] truncate">{p.title}</span>
+              {p.title}
             </button>
           ) : null,
         )}
@@ -248,7 +241,7 @@ export function Charts() {
                 rel="noopener noreferrer"
                 className="group inline-flex items-start gap-1.5"
               >
-                <span className="line-clamp-1 font-semibold text-ink group-hover:text-brand">
+                <span className="line-clamp-2 font-semibold text-ink group-hover:text-brand">
                   {product.title}
                 </span>
                 <IconExternal size={13} className="mt-0.5 shrink-0 text-ink-faint" />
