@@ -234,7 +234,7 @@ export function Settings() {
         <form onSubmit={handleSave} className="space-y-4">
           <Card
             key={isEditing ? "editing" : "viewing"}
-            className={`space-y-4 ${isEditing ? "animate-fade-up" : ""}`}
+            className={`space-y-4 ${isEditing ? "animate-settle-in" : ""}`}
           >
             <Field label="Name">
               <Input
@@ -248,9 +248,8 @@ export function Settings() {
 
             <Field label="Username">
               {hasPermanentUsername ? (
-                <div className="flex items-center justify-between gap-2 rounded-md border border-border/15 bg-surface px-4 py-3">
-                  <span className="tabular text-ink">@{profile!.username}</span>
-                  <span className="shrink-0 text-xs text-ink-faint">Can't be changed</span>
+                <div className="rounded-md border border-border/15 bg-surface px-4 py-3 opacity-50">
+                  <span className="tabular text-ink-faint">@{profile!.username}</span>
                 </div>
               ) : (
                 <>
