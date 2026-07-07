@@ -11,7 +11,7 @@ import { initFirestore } from "./firebase.js";
  * The PricePilot "engine": run on a schedule by GitHub Actions.
  * 1. Find products due for a check (nextCheckAt <= now).
  * 2. Scrape each (shared across all users tracking it).
- * 3. Write a history point only when the price/stock changed.
+ * 3. Write a history point on every successful check (continuous trace).
  * 4. Update the product summary + nextCheckAt.
  * Alert evaluation + notifications are added in S5.
  * See docs/07-spark-mvp.md.
@@ -32,7 +32,7 @@ async function main() {
 
   console.log(`[scrape] ${due.size} product(s) due at ${new Date(now).toISOString()}`);
 
-  let changed = 0;
+  let recorded = 0;
   let skipped = 0;
   let failed = 0;
 
@@ -50,23 +50,18 @@ async function main() {
         continue;
       }
 
-      const priceChanged = price !== product.currentPrice;
-      const stockChanged = snap.inStock !== product.inStock;
-
-      // Seed the very first history point on a product's first successful
-      // check, even if nothing "changed" — otherwise a product's chart stays
-      // empty until its price happens to move. Detected by the absence of any
-      // existing history doc (one cheap read per due product).
-      const hasHistory = !(await doc.ref.collection("history").limit(1).get()).empty;
-
-      if (price !== null && (priceChanged || stockChanged || !hasHistory)) {
+      // Record a history point on every successful check (whenever a price was
+      // read), not only when it changed — this keeps the price chart a
+      // continuous hourly trace instead of a sparse on-change line. Reads are
+      // capped client-side (limitToLast(500)), so a growing series stays cheap.
+      if (price !== null) {
         await doc.ref.collection("history").add({
           ts: now,
           price,
           inStock: snap.inStock,
           source: snap.source,
         });
-        changed++;
+        recorded++;
       }
 
       const update: Partial<ProductDoc> = {
@@ -100,7 +95,7 @@ async function main() {
     }
   }
 
-  console.log(`[scrape] done — changed:${changed} skipped:${skipped} failed:${failed}`);
+  console.log(`[scrape] done — recorded:${recorded} skipped:${skipped} failed:${failed}`);
 }
 
 async function scheduleNext(
