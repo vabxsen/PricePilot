@@ -27,7 +27,7 @@ export function BottomNav() {
           <NavLink
             key={to}
             to={to}
-            className="group flex flex-1 flex-col items-center gap-1 py-1 text-[11px] font-medium"
+            className="group flex flex-1 flex-col items-center gap-0.5 py-0.5 text-[11px] font-medium"
           >
             {({ isActive }: { isActive: boolean }) => (
               <>
