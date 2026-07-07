@@ -333,20 +333,20 @@ export function Dashboard() {
             <button
               type="button"
               onClick={() => setShowTrackDialog(true)}
-              className="group flex flex-col items-center justify-center gap-2 rounded-xl bg-brand px-4 py-5 text-center text-sm font-semibold text-bg transition duration-200 hover:bg-brand-hover active:scale-[0.99]"
+              className="group flex flex-col items-center justify-center gap-1.5 rounded-xl bg-brand px-3 py-3.5 text-center text-sm font-semibold text-bg transition duration-200 hover:bg-brand-hover active:scale-[0.99]"
             >
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-bg/15 transition-transform duration-200 group-hover:rotate-90">
-                <IconPlus size={18} />
+              <span className="grid h-7 w-7 place-items-center rounded-full bg-bg/15 transition-transform duration-200 group-hover:rotate-90">
+                <IconPlus size={15} />
               </span>
               Track a product
             </button>
 
             <Link
               to="/products"
-              className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-border/10 bg-surface px-4 py-5 text-center text-sm font-semibold text-ink transition duration-200 hover:border-brand/30 hover:bg-surface-raised"
+              className="group flex flex-col items-center justify-center gap-1.5 rounded-xl border border-border/10 bg-surface px-3 py-3.5 text-center text-sm font-semibold text-ink transition duration-200 hover:border-brand/30 hover:bg-surface-raised"
             >
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-brand/15 text-brand">
-                <IconTrendDown size={18} />
+              <span className="grid h-7 w-7 place-items-center rounded-full bg-brand/15 text-brand">
+                <IconTrendDown size={15} />
               </span>
               Recent price drops
               <span className="text-xs font-normal text-ink-faint">
