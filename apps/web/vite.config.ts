@@ -20,7 +20,13 @@ export default defineConfig({
         start_url: "/",
         icons: [
           { src: "/logo.png", sizes: "1254x1254", type: "image/png", purpose: "any" },
-          { src: "/logo.png", sizes: "1254x1254", type: "image/png", purpose: "maskable" },
+          // Separate, more conservatively-padded crop: Android's adaptive-icon
+          // masking only guarantees a centered safe-zone circle at 40% of the
+          // icon's width, and can clip anything closer to the edge than that
+          // (depending on the launcher's exact mask shape). Reusing the
+          // tightly-cropped "any" artwork here left only ~2% of margin to
+          // spare, which the home-screen icon actually clipped in practice.
+          { src: "/logo-maskable.png", sizes: "1254x1254", type: "image/png", purpose: "maskable" },
         ],
       },
     }),
