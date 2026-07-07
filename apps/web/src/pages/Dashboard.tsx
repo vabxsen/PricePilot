@@ -58,19 +58,20 @@ function TrackButton({ onClick, label }: { onClick: () => void; label: string })
   );
 }
 
-/** Active alerts as compact cards: separate Current/Target rows + a thin progress bar. */
+/** Active alert card: current price, plus target + progress when a target is set. */
 function TargetCard({ item }: { item: TrackedItem }) {
   const { tracker, product } = item;
-  if (!product || product.currentPrice === null || tracker.targetPrice == null) return null;
+  if (!product || product.currentPrice === null) return null;
 
-  const met = product.currentPrice <= tracker.targetPrice;
-  const start = Math.max(tracker.priceAtAdd, tracker.targetPrice + 0.01);
-  const progress = met
-    ? 100
-    : Math.max(
-        0,
-        Math.min(100, ((start - product.currentPrice) / (start - tracker.targetPrice)) * 100),
-      );
+  const target = tracker.targetPrice ?? null;
+  const met = target !== null && product.currentPrice <= target;
+  const start = target !== null ? Math.max(tracker.priceAtAdd, target + 0.01) : 0;
+  const progress =
+    target === null
+      ? 0
+      : met
+        ? 100
+        : Math.max(0, Math.min(100, ((start - product.currentPrice) / (start - target)) * 100));
 
   return (
     <Link
@@ -107,21 +108,27 @@ function TargetCard({ item }: { item: TrackedItem }) {
               {formatMoney(product.currentPrice, product.currency)}
             </div>
           </div>
-          <div>
-            <div className="text-[10px] font-medium uppercase tracking-wide text-ink-faint">
-              Target
+          {target !== null && (
+            <div>
+              <div className="text-[10px] font-medium uppercase tracking-wide text-ink-faint">
+                Target
+              </div>
+              <div className="tabular text-sm font-semibold text-brand">
+                {formatMoney(target, product.currency)}
+              </div>
             </div>
-            <div className="tabular text-sm font-semibold text-brand">
-              {formatMoney(tracker.targetPrice, product.currency)}
-            </div>
+          )}
+        </div>
+        {target !== null ? (
+          <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-surface">
+            <div
+              className="h-full rounded-full bg-brand transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            />
           </div>
-        </div>
-        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-surface">
-          <div
-            className="h-full rounded-full bg-brand transition-all duration-500"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        ) : (
+          <div className="mt-2 text-[11px] text-ink-faint">No target price set</div>
+        )}
       </div>
     </Link>
   );
@@ -246,6 +253,9 @@ export function Dashboard() {
     .sort((a, b) => (dropPercent(b) ?? 0) - (dropPercent(a) ?? 0));
 
   const activeAlerts = items.filter((i) => i.tracker.alertsEnabled);
+  // Cards for the "Active alerts" section: any tracked product with alerts on
+  // and a known price (a target price is optional — shown when set).
+  const alertItems = items.filter((i) => i.tracker.alertsEnabled && i.product?.currentPrice != null);
   const targets = items.filter(
     (i) => i.tracker.targetPrice != null && i.tracker.alertsEnabled && i.product?.currentPrice != null,
   );
@@ -359,16 +369,16 @@ export function Dashboard() {
 
           <DealsToday drops={drops} />
 
-          {/* Active price targets */}
+          {/* Active alerts */}
           <div className="mt-5 rounded-xl border border-border/10 bg-surface p-4">
             <SectionHeader title="Active alerts" to="/products" cta="View all" />
-            {targets.length === 0 ? (
+            {alertItems.length === 0 ? (
               <p className="px-2 py-5 text-center text-sm text-ink-faint">
-                Set a target price to track progress here.
+                Products you're tracking with alerts on will show here.
               </p>
             ) : (
               <div className="space-y-2">
-                {targets.slice(0, 5).map((item) => (
+                {alertItems.slice(0, 5).map((item) => (
                   <TargetCard key={item.tracker.id} item={item} />
                 ))}
               </div>
