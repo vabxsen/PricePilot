@@ -4,16 +4,24 @@ import {
   type ProductDoc,
   type TrackerDoc,
 } from "@pricepilot/shared";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { PriceHistoryChart } from "../components/PriceHistoryChart.js";
 import { RetailerBadge } from "../components/RetailerBadge.js";
 import { buttonClasses } from "../components/ui/Button.js";
 import { SegmentedControl, type Segment } from "../components/ui/SegmentedControl.js";
-import { IconBox, IconChart, IconExternal, IconPlus, IconTrendDown } from "../components/ui/icons.js";
+import {
+  IconBox,
+  IconChart,
+  IconCheck,
+  IconChevronDown,
+  IconExternal,
+  IconPlus,
+  IconTrendDown,
+} from "../components/ui/icons.js";
 import { useAuth } from "../lib/auth.js";
 import { formatMoney } from "../lib/format.js";
-import { useProductHistory, useTrackedProducts } from "../lib/trackers.js";
+import { useProductHistory, useTrackedProducts, type TrackedItem } from "../lib/trackers.js";
 
 type RangeKey = "1W" | "1M" | "3M" | "6M" | "1Y" | "All";
 
@@ -121,6 +129,98 @@ function Stat({
   );
 }
 
+function Thumb({ url, size = 24 }: { url?: string; size?: number }) {
+  const cls = size === 24 ? "h-6 w-6" : "h-7 w-7";
+  return url ? (
+    <img src={url} alt="" className={`${cls} shrink-0 rounded-md object-cover`} />
+  ) : (
+    <span className={`grid ${cls} shrink-0 place-items-center rounded-md bg-surface-raised text-ink-faint`}>
+      <IconBox size={size === 24 ? 13 : 15} />
+    </span>
+  );
+}
+
+/** Compact dropdown to pick which tracked product to chart. */
+function ProductPicker({
+  items,
+  selectedId,
+  onSelect,
+}: {
+  items: TrackedItem[];
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const products = items.map((i) => i.product).filter(Boolean) as NonNullable<TrackedItem["product"]>[];
+  const selected = products.find((p) => p.id === selectedId) ?? null;
+
+  return (
+    <div ref={ref} className="relative mt-5">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className="flex w-full items-center gap-3 rounded-xl border border-border/15 bg-surface px-3 py-2.5 text-left transition hover:bg-surface-raised"
+      >
+        <Thumb url={selected?.imageUrl} size={28} />
+        <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink">
+          {selected?.title ?? "Select a product"}
+        </span>
+        <IconChevronDown
+          size={18}
+          className={`shrink-0 text-ink-faint transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          className="absolute z-20 mt-2 max-h-72 w-full overflow-auto rounded-xl border border-border/10 bg-surface-raised p-1 shadow-lg"
+        >
+          {products.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              role="option"
+              aria-selected={p.id === selectedId}
+              onClick={() => {
+                onSelect(p.id);
+                setOpen(false);
+              }}
+              className={`flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left transition ${
+                p.id === selectedId ? "bg-brand/10 text-brand" : "text-ink hover:bg-surface"
+              }`}
+            >
+              <Thumb url={p.imageUrl} />
+              <span className="min-w-0 flex-1 truncate text-sm">{p.title}</span>
+              {p.id === selectedId && <IconCheck size={15} className="shrink-0 text-brand" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function Charts() {
   const { user } = useAuth();
   const { items, loading } = useTrackedProducts(user?.uid);
@@ -198,26 +298,8 @@ export function Charts() {
       <h1 className="text-2xl font-bold text-ink">Charts</h1>
       <p className="mt-1 text-sm text-ink-muted">Price history for any product you track.</p>
 
-      {/* Product selector — simple text pills; wraps so a long list never
-          widens the page on mobile. */}
-      <div className="mt-5 flex flex-wrap gap-2">
-        {items.map(({ product: p }) =>
-          p ? (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => setSelectedId(p.id)}
-              className={`max-w-[12rem] truncate rounded-full border px-3.5 py-1.5 text-sm transition ${
-                p.id === selectedId
-                  ? "border-brand/40 bg-brand/10 font-medium text-brand"
-                  : "border-border/15 bg-surface text-ink-muted hover:bg-surface-raised hover:text-ink"
-              }`}
-            >
-              {p.title}
-            </button>
-          ) : null,
-        )}
-      </div>
+      {/* Product selector — compact dropdown; scales cleanly to many products. */}
+      <ProductPicker items={items} selectedId={selectedId} onSelect={setSelectedId} />
 
       {product && (
         <>
