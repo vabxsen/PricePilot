@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 /** The (still non-standard) beforeinstallprompt event, typed minimally. */
 interface BeforeInstallPromptEvent extends Event {
@@ -15,13 +15,32 @@ function isStandalone(): boolean {
   );
 }
 
+interface PwaInstallState {
+  /** App is running in standalone/installed mode. */
+  installed: boolean;
+  /** The browser fired `beforeinstallprompt` and we can offer it. */
+  canInstall: boolean;
+  /** Triggers the native install prompt. */
+  promptInstall: () => Promise<void>;
+}
+
+const PwaInstallContext = createContext<PwaInstallState>({
+  installed: false,
+  canInstall: false,
+  promptInstall: async () => {},
+});
+
 /**
- * Tracks PWA install state for the Settings page:
- * - `installed`  — app is running in standalone/installed mode.
- * - `canInstall` — the browser fired `beforeinstallprompt` and we can offer it.
- * - `promptInstall()` — triggers the native install prompt.
+ * Mounted once at the app root (see main.tsx) — deliberately NOT a
+ * per-component hook. `beforeinstallprompt` fires at most once per page
+ * load, often within the first few seconds, well before a user would
+ * navigate all the way to Settings. A listener that only attaches once the
+ * Settings page happens to mount misses that event permanently for the
+ * rest of the session (this was the bug: the Install button looked broken
+ * because it never had a chance to hear the event fire). Listening from the
+ * very first paint means it's captured no matter which page loads first.
  */
-export function usePwaInstall() {
+export function PwaInstallProvider({ children }: { children: ReactNode }) {
   const [promptEvent, setPromptEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(isStandalone);
 
@@ -54,5 +73,13 @@ export function usePwaInstall() {
     setPromptEvent(null);
   }
 
-  return { installed, canInstall: !!promptEvent, promptInstall };
+  return (
+    <PwaInstallContext.Provider value={{ installed, canInstall: !!promptEvent, promptInstall }}>
+      {children}
+    </PwaInstallContext.Provider>
+  );
+}
+
+export function usePwaInstall(): PwaInstallState {
+  return useContext(PwaInstallContext);
 }

@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { App } from "./App.js";
 import { AuthProvider } from "./lib/auth.js";
 import { ErrorBoundary } from "./lib/ErrorBoundary.js";
+import { PwaInstallProvider } from "./lib/pwa.js";
 import "./index.css";
 
 const queryClient = new QueryClient({
@@ -16,9 +17,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
+          <PwaInstallProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </PwaInstallProvider>
         </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
