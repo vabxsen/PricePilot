@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { RetailerBadge } from "../components/RetailerBadge.js";
 import { Sparkline } from "../components/Sparkline.js";
 import { StatCard } from "../components/StatCard.js";
 import { TrackProductDialog } from "../components/TrackProductDialog.js";
@@ -77,8 +78,11 @@ function DropRow({ item }: { item: TrackedItem }) {
       )}
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium text-ink">{product.title}</div>
-        <div className="tabular mt-0.5 text-sm font-semibold text-ink">
-          {formatMoney(product.currentPrice!, product.currency)}
+        <div className="mt-0.5 flex items-center gap-2">
+          <RetailerBadge retailer={product.retailer} url={product.url} />
+          <span className="tabular text-sm font-semibold text-ink">
+            {formatMoney(product.currentPrice!, product.currency)}
+          </span>
         </div>
       </div>
       <span className="tabular shrink-0 rounded-full bg-brand/15 px-2 py-1 text-xs font-semibold text-brand">
@@ -116,7 +120,12 @@ function TargetCard({ item }: { item: TrackedItem }) {
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
-          <div className="truncate text-sm font-medium text-ink">{product.title}</div>
+          <div className="min-w-0">
+            <div className="truncate text-sm font-medium text-ink">{product.title}</div>
+            <div className="mt-0.5">
+              <RetailerBadge retailer={product.retailer} url={product.url} />
+            </div>
+          </div>
           {met && (
             <span className="shrink-0 rounded-full bg-brand/15 px-2 py-0.5 text-[10px] font-medium text-brand">
               Reached

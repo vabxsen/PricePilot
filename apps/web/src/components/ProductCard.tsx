@@ -2,6 +2,7 @@ import type { TrackerDoc } from "@pricepilot/shared";
 import { Link } from "react-router-dom";
 import { useProduct, useProductHistory } from "../lib/trackers.js";
 import { Delta } from "./Delta.js";
+import { RetailerBadge } from "./RetailerBadge.js";
 import { Sparkline } from "./Sparkline.js";
 
 export function ProductCard({ tracker }: { tracker: TrackerDoc }) {
@@ -32,7 +33,9 @@ export function ProductCard({ tracker }: { tracker: TrackerDoc }) {
         )}
         <div className="min-w-0 flex-1">
           <div className="truncate font-medium text-ink">{product.title}</div>
-          <div className="text-xs text-ink-faint">{product.retailer}</div>
+          <div className="mt-0.5">
+            <RetailerBadge retailer={product.retailer} url={product.url} />
+          </div>
           <div className="mt-1 flex flex-wrap items-baseline gap-1.5">
             <span className="tabular text-lg font-semibold text-ink">
               {product.currentPrice !== null ? fmt.format(product.currentPrice) : "—"}

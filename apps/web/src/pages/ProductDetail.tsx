@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Card } from "../components/ui/Card.js";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog.js";
 import { PriceChart } from "../components/PriceChart.js";
+import { RetailerBadge } from "../components/RetailerBadge.js";
 import { StatTile } from "../components/StatTile.js";
 import { buttonClasses } from "../components/ui/Button.js";
 import { Switch } from "../components/ui/Switch.js";
@@ -55,7 +56,9 @@ export function ProductDetail() {
           )}
           <div>
             <h1 className="text-2xl font-bold text-ink">{product.title}</h1>
-            <p className="text-ink-faint">{product.retailer}</p>
+            <div className="mt-1">
+              <RetailerBadge retailer={product.retailer} url={product.url} size="md" />
+            </div>
             <div className="mt-1 flex flex-wrap items-baseline gap-2">
               <span className="tabular text-3xl font-semibold text-ink">
                 {product.currentPrice !== null ? fmt.format(product.currentPrice) : "—"}

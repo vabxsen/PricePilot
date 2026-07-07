@@ -60,6 +60,19 @@ const RETAILER_NAMES: Record<string, string> = {
   "ebay.com": "eBay",
   "etsy.com": "Etsy",
   "newegg.com": "Newegg",
+  "aliexpress.com": "AliExpress",
+  // India-focused retailers whose multi-word or lowercase names the generic
+  // hostname->capitalize fallback would otherwise mangle (e.g. "Reliancedigital").
+  "flipkart.com": "Flipkart",
+  "myntra.com": "Myntra",
+  "ajio.com": "AJIO",
+  "nykaa.com": "Nykaa",
+  "meesho.com": "Meesho",
+  "snapdeal.com": "Snapdeal",
+  "croma.com": "Croma",
+  "reliancedigital.in": "Reliance Digital",
+  "tatacliq.com": "Tata CLiQ",
+  "jiomart.com": "JioMart",
 };
 
 /** Human-friendly retailer name derived from the hostname. */

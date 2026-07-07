@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { RetailerBadge } from "../components/RetailerBadge.js";
 import { Button } from "../components/ui/Button.js";
 import { Card } from "../components/ui/Card.js";
 import { Input } from "../components/ui/Input.js";
@@ -96,7 +97,9 @@ export function AddProduct() {
             )}
             <div className="flex-1">
               <div className="font-medium text-ink">{preview.title ?? "Untitled product"}</div>
-              <div className="text-sm text-ink-faint">{preview.retailer}</div>
+              <div className="mt-0.5">
+                <RetailerBadge retailer={preview.retailer} url={preview.url} size="md" />
+              </div>
               <div className="mt-1 flex flex-wrap items-baseline gap-2">
                 <span className="tabular text-xl font-semibold text-ink">
                   {preview.price !== null

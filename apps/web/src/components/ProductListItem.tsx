@@ -2,6 +2,7 @@ import type { ProductDoc, TrackerDoc } from "@pricepilot/shared";
 import { Link } from "react-router-dom";
 import { formatMoney } from "../lib/format.js";
 import { Delta } from "./Delta.js";
+import { RetailerBadge } from "./RetailerBadge.js";
 import { Switch } from "./ui/Switch.js";
 import { IconBox, IconExternal, IconTrash } from "./ui/icons.js";
 
@@ -56,7 +57,9 @@ export function ProductListItem({
           <div className="flex items-start justify-between gap-3">
             <Link to={`/product/${product.id}`} className="min-w-0">
               <div className="truncate font-medium text-ink">{product.title}</div>
-              <div className="truncate text-xs text-ink-faint">{product.retailer}</div>
+              <div className="mt-0.5">
+                <RetailerBadge retailer={product.retailer} url={product.url} />
+              </div>
             </Link>
             <div className="shrink-0 text-right">
               <div className="tabular text-lg font-semibold text-ink">

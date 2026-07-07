@@ -1,5 +1,6 @@
 import type { WishlistItem } from "@pricepilot/shared";
 import { formatMoney } from "../lib/format.js";
+import { RetailerBadge } from "./RetailerBadge.js";
 import { IconBox, IconExternal, IconPlus, IconTrash } from "./ui/icons.js";
 
 /**
@@ -34,7 +35,9 @@ export function WishlistCard({
         )}
         <div className="min-w-0 flex-1">
           <div className="truncate font-medium text-ink">{item.title}</div>
-          <div className="truncate text-xs text-ink-faint">{item.retailer}</div>
+          <div className="mt-0.5">
+            <RetailerBadge retailer={item.retailer} url={item.url} />
+          </div>
           <div className="tabular mt-1 text-lg font-semibold text-ink">
             {item.price !== null ? formatMoney(item.price, item.currency) : "—"}
           </div>

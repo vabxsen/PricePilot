@@ -27,6 +27,9 @@ describe("productIdFromUrl", () => {
 describe("retailerNameFromUrl", () => {
   it("maps known retailers to friendly names", () => {
     expect(retailerNameFromUrl("https://www.amazon.com/dp/xyz")).toBe("Amazon");
+    expect(retailerNameFromUrl("https://www.flipkart.com/p/itm")).toBe("Flipkart");
+    expect(retailerNameFromUrl("https://www.myntra.com/x")).toBe("Myntra");
+    expect(retailerNameFromUrl("https://www.reliancedigital.in/x")).toBe("Reliance Digital");
   });
 
   it("falls back to a titlecased hostname for unknown retailers", () => {

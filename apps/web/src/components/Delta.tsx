@@ -1,5 +1,5 @@
 /**
- * Price drops use the brand red (the "hot deal" signal — this app's whole
+ * Price drops use the brand accent (the "hot deal" signal — this app's whole
  * point is drops, so they get the hero color). Increases stay quiet/muted:
  * nothing to celebrate, so nothing fights for attention.
  */
