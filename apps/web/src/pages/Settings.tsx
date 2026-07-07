@@ -348,6 +348,7 @@ export function Settings() {
               <Button
                 variant="secondary"
                 onClick={promptInstall}
+                style={{ borderColor: "var(--color-danger)" }}
                 className="inline-flex shrink-0 items-center gap-2"
               >
                 <IconDownload size={16} /> Install
