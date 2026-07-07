@@ -422,9 +422,9 @@ export function Settings() {
           type="button"
           onClick={() => setShowCredits(true)}
           aria-label="About this app"
-          className="mt-3 inline-flex items-center justify-center rounded-full p-2 text-ink-faint transition hover:text-danger"
+          className="mt-3 inline-flex items-center justify-center rounded-full p-2 text-danger transition hover:scale-110"
         >
-          <IconHeart size={18} />
+          <IconHeart size={18} className="animate-heartbeat" />
         </button>
       </div>
 
