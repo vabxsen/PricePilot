@@ -18,6 +18,9 @@ out/
 !.env.example
 *.pem
 secrets/
+serviceAccount*.json
+firebase-key.json
+*firebase*key*.json
 
 # Logs
 logs/
