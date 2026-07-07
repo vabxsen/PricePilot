@@ -64,18 +64,22 @@ async function main() {
         recorded++;
       }
 
+      // Always record that we checked, but never let a failed read (price ===
+      // null — e.g. the retailer blocked the request or changed its markup)
+      // wipe a previously-good price/stock. We only overwrite currentPrice,
+      // inStock, and the derived fields when the scrape actually returned a
+      // price; a null read just advances the check timestamps.
       const update: Partial<ProductDoc> = {
-        currentPrice: price,
-        inStock: snap.inStock,
         lastCheckedAt: now,
         nextCheckAt: now + product.checkInterval * 1000,
       };
-      // Only set these when the scrape actually reported a value — Admin SDK
-      // rejects literal `undefined` field values, and most non-Amazon
-      // adapters simply don't populate them.
-      if (snap.originalPrice !== undefined) update.originalPrice = snap.originalPrice;
-      if (snap.discountPercent !== undefined) update.discountPercent = snap.discountPercent;
       if (price !== null) {
+        update.currentPrice = price;
+        update.inStock = snap.inStock;
+        // Admin SDK rejects literal `undefined`; most non-Amazon adapters
+        // simply don't populate these.
+        if (snap.originalPrice !== undefined) update.originalPrice = snap.originalPrice;
+        if (snap.discountPercent !== undefined) update.discountPercent = snap.discountPercent;
         update.allTimeLow =
           product.allTimeLow == null ? price : Math.min(product.allTimeLow, price);
         update.allTimeHigh =
