@@ -25,4 +25,5 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESOLVER_URL: https://pricepilot-resolver.vabxsen.workers.dev
         run: npm run scrape
